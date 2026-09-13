@@ -1,0 +1,803 @@
+<main class="clientes-page">
+
+  <!-- =====================================================
+       ENCABEZADO
+       ===================================================== -->
+  <section class="page-header">
+
+    <div>
+
+      <span class="page-eyebrow">
+        GESTIÓN COMERCIAL
+      </span>
+
+      <h1>
+        Clientes
+      </h1>
+
+      <p>
+        Administra los clientes comerciales
+        registrados en tu empresa.
+      </p>
+
+    </div>
+
+    @if (puedeCrear) {
+
+      <button
+        type="button"
+        class="primary-button"
+        (click)="abrirNuevoCliente()"
+      >
+
+        <span class="button-plus">
+          +
+        </span>
+
+        Nuevo cliente
+
+      </button>
+
+    }
+
+  </section>
+
+  <!-- =====================================================
+       BARRA DE ACCIONES
+       ===================================================== -->
+  <section class="toolbar">
+
+    <div class="search-box">
+
+      <svg viewBox="0 0 24 24">
+
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <path
+          d="m20 20-3.5-3.5"
+        ></path>
+
+      </svg>
+
+      <input
+        type="text"
+        placeholder="Buscar empresa, documento, correo o contacto..."
+        (input)="buscar($event)"
+      >
+
+    </div>
+
+    <div class="toolbar-count">
+
+      <strong>
+        {{ clientesFiltrados.length }}
+      </strong>
+
+      <span>
+        clientes
+      </span>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       ERROR
+       ===================================================== -->
+  @if (errorCarga) {
+
+    <section class="state-card error-state">
+
+      <strong>
+        No se pudo cargar Clientes
+      </strong>
+
+      <span>
+        {{ mensajeError }}
+      </span>
+
+      <button
+        type="button"
+        (click)="cargarClientes()"
+      >
+        Reintentar
+      </button>
+
+    </section>
+
+  }
+
+  <!-- =====================================================
+       CARGANDO
+       ===================================================== -->
+  @else if (cargando) {
+
+    <section class="state-card">
+
+      <div class="loader">
+      </div>
+
+      <strong>
+        Cargando clientes...
+      </strong>
+
+    </section>
+
+  }
+
+  <!-- =====================================================
+       VACÍO
+       ===================================================== -->
+  @else if (
+    clientesFiltrados.length === 0
+  ) {
+
+    <section class="state-card">
+
+      <div class="empty-icon">
+
+        <svg viewBox="0 0 24 24">
+
+          <circle
+            cx="9"
+            cy="8"
+            r="4"
+          ></circle>
+
+          <path
+            d="M3 21v-2a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v2"
+          ></path>
+
+          <path
+            d="M17 11a4 4 0 0 0 0-6"
+          ></path>
+
+        </svg>
+
+      </div>
+
+      <strong>
+        No se encontraron clientes
+      </strong>
+
+      <span>
+        Puedes registrar un nuevo cliente
+        desde esta pantalla.
+      </span>
+
+    </section>
+
+  }
+
+  <!-- =====================================================
+       TABLA
+       ===================================================== -->
+  @else {
+
+    <section class="table-card">
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Cliente
+              </th>
+
+              <th>
+                Documento
+              </th>
+
+              <th>
+                Correo empresa
+              </th>
+
+              <th>
+                Contacto principal
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th class="actions-column">
+                Acciones
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            @for (
+              cliente of clientesFiltrados;
+              track cliente.idCliente
+            ) {
+
+              <tr>
+
+                <!-- CLIENTE -->
+                <td>
+
+                  <div class="client-cell">
+
+                    <div class="client-avatar">
+
+                      {{
+                        cliente.razonSocial
+                          .charAt(0)
+                          .toUpperCase()
+                      }}
+
+                    </div>
+
+                    <div class="client-info">
+
+                      <strong>
+                        {{ cliente.razonSocial }}
+                      </strong>
+
+                      <span>
+
+                        {{
+                          cliente.nombreComercial
+                          || 'Sin nombre comercial'
+                        }}
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                </td>
+
+                <!-- DOCUMENTO -->
+                <td>
+
+                  <div class="document-cell">
+
+                    <strong>
+
+                      {{
+                        cliente.tipoDocumento
+                        || 'Documento'
+                      }}
+
+                    </strong>
+
+                    <span>
+
+                      {{
+                        cliente.numeroDocumento
+                        || 'Sin número'
+                      }}
+
+                    </span>
+
+                  </div>
+
+                </td>
+
+                <!-- CORREO EMPRESA -->
+                <td>
+
+                  <div class="contact-cell">
+
+                    <strong>
+
+                      {{
+                        cliente.correo
+                        || 'Sin correo general'
+                      }}
+
+                    </strong>
+
+                    <span>
+
+                      {{
+                        cliente.direccion
+                        || 'Sin dirección'
+                      }}
+
+                    </span>
+
+                  </div>
+
+                </td>
+
+                <!-- CONTACTO PRINCIPAL -->
+                <td>
+
+                  <div class="contact-cell">
+
+                    <strong>
+
+                      {{
+                        cliente.contactoNombre
+                        || 'Sin contacto'
+                      }}
+
+                    </strong>
+
+                    <span>
+
+                      {{
+                        cliente.contactoTelefono
+                        || 'Sin teléfono'
+                      }}
+
+                    </span>
+
+                    <span>
+
+                      {{
+                        cliente.contactoCorreo
+                        || 'Sin correo'
+                      }}
+
+                    </span>
+
+                  </div>
+
+                </td>
+
+                <!-- ESTADO -->
+                <td>
+
+                  <span
+                    class="status-badge"
+                    [class.inactive]="!cliente.estado"
+                  >
+
+                    <span
+                      class="status-dot"
+                    ></span>
+
+                    {{
+                      cliente.estado
+                      ? 'Activo'
+                      : 'Inactivo'
+                    }}
+
+                  </span>
+
+                </td>
+
+                <!-- ACCIONES -->
+                <td class="actions-column">
+
+                  @if (puedeEditar) {
+
+                    <button
+                      type="button"
+                      class="edit-button"
+                      title="Editar cliente"
+                      (click)="editarCliente(cliente)"
+                    >
+
+                      <svg viewBox="0 0 24 24">
+
+                        <path
+                          d="M12 20h9"
+                        ></path>
+
+                        <path
+                          d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"
+                        ></path>
+
+                      </svg>
+
+                      Editar
+
+                    </button>
+
+                  } @else {
+
+                    <span class="no-actions">
+                      —
+                    </span>
+
+                  }
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  }
+
+</main>
+
+<!-- =======================================================
+     MODAL NUEVO / EDITAR CLIENTE
+     ======================================================= -->
+@if (mostrarFormulario) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarFormulario()"
+  >
+
+    <section
+      class="modal-card"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- HEADER MODAL -->
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            CLIENTES
+          </span>
+
+          <h2>
+
+            {{
+              modoEdicion
+              ? 'Editar cliente'
+              : 'Nuevo cliente'
+            }}
+
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarFormulario()"
+          [disabled]="guardando"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <!-- FORMULARIO -->
+      <form
+        [formGroup]="formularioCliente"
+        (ngSubmit)="guardarCliente()"
+      >
+
+        <div class="form-grid">
+
+          <!-- ===============================================
+               DATOS DE EMPRESA
+               =============================================== -->
+
+          <div class="section-divider full">
+
+            <span>
+              Datos del cliente
+            </span>
+
+          </div>
+
+          <!-- RAZÓN SOCIAL -->
+          <div class="form-group full">
+
+            <label>
+              Razón social *
+            </label>
+
+            <input
+              type="text"
+              formControlName="razonSocial"
+              maxlength="150"
+              placeholder="Ej. Distribuidora Andina SAC"
+            >
+
+            @if (
+              formularioCliente
+                .get('razonSocial')
+                ?.touched &&
+              formularioCliente
+                .get('razonSocial')
+                ?.invalid
+            ) {
+
+              <span class="field-error">
+                La razón social es obligatoria.
+              </span>
+
+            }
+
+          </div>
+
+          <!-- NOMBRE COMERCIAL -->
+          <div class="form-group full">
+
+            <label>
+              Nombre comercial
+            </label>
+
+            <input
+              type="text"
+              formControlName="nombreComercial"
+              maxlength="150"
+              placeholder="Ej. Andina Industrial"
+            >
+
+          </div>
+
+          <!-- TIPO DOCUMENTO -->
+          <div class="form-group">
+
+            <label>
+              Tipo de documento
+            </label>
+
+            <select
+              formControlName="tipoDocumento"
+            >
+
+              <option value="">
+                Seleccionar
+              </option>
+
+              <option value="RUC">
+                RUC
+              </option>
+
+              <option value="DNI">
+                DNI
+              </option>
+
+              <option value="CE">
+                CE
+              </option>
+
+              <option value="OTRO">
+                Otro
+              </option>
+
+            </select>
+
+          </div>
+
+          <!-- NÚMERO DOCUMENTO -->
+          <div class="form-group">
+
+            <label>
+              Número de documento
+            </label>
+
+            <input
+              type="text"
+              formControlName="numeroDocumento"
+              maxlength="20"
+              placeholder="Ej. 20123456789"
+            >
+
+          </div>
+
+          <!-- CORREO GENERAL -->
+          <div class="form-group full">
+
+            <label>
+              Correo general
+            </label>
+
+            <input
+              type="email"
+              formControlName="correo"
+              maxlength="150"
+              placeholder="empresa@correo.com"
+            >
+
+            @if (
+              formularioCliente
+                .get('correo')
+                ?.touched &&
+              formularioCliente
+                .get('correo')
+                ?.hasError('email')
+            ) {
+
+              <span class="field-error">
+                El correo no es válido.
+              </span>
+
+            }
+
+          </div>
+
+          <!-- DIRECCIÓN -->
+          <div class="form-group full">
+
+            <label>
+              Dirección
+            </label>
+
+            <input
+              type="text"
+              formControlName="direccion"
+              maxlength="250"
+              placeholder="Dirección fiscal o comercial"
+            >
+
+          </div>
+
+          <!-- ===============================================
+               CONTACTO PRINCIPAL
+               =============================================== -->
+          <div class="section-divider full">
+
+            <span>
+              Contacto principal
+            </span>
+
+          </div>
+
+          <!-- NOMBRE -->
+          <div class="form-group full">
+
+            <label>
+              Nombre del contacto
+            </label>
+
+            <input
+              type="text"
+              formControlName="contactoNombre"
+              maxlength="150"
+              placeholder="Ej. Juan Pérez"
+            >
+
+          </div>
+
+          <!-- TELÉFONO -->
+          <div class="form-group">
+
+            <label>
+              Teléfono
+            </label>
+
+            <input
+              type="text"
+              formControlName="contactoTelefono"
+              maxlength="30"
+              placeholder="Ej. 987654321"
+            >
+
+          </div>
+
+          <!-- CORREO -->
+          <div class="form-group">
+
+            <label>
+              Correo
+            </label>
+
+            <input
+              type="email"
+              formControlName="contactoCorreo"
+              maxlength="150"
+              placeholder="contacto@empresa.com"
+            >
+
+            @if (
+              formularioCliente
+                .get('contactoCorreo')
+                ?.touched &&
+              formularioCliente
+                .get('contactoCorreo')
+                ?.hasError('email')
+            ) {
+
+              <span class="field-error">
+                El correo no es válido.
+              </span>
+
+            }
+
+          </div>
+
+          <!-- ===============================================
+               ESTADO
+               =============================================== -->
+          <div class="section-divider full">
+
+            <span>
+              Estado
+            </span>
+
+          </div>
+
+          <div class="form-group full">
+
+            <label class="switch-row">
+
+              <input
+                type="checkbox"
+                formControlName="estado"
+              >
+
+              <span class="switch-control">
+              </span>
+
+              <span>
+                Cliente activo
+              </span>
+
+            </label>
+
+          </div>
+
+        </div>
+
+        <!-- ERROR DEL FORMULARIO -->
+        @if (
+          mensajeError &&
+          !errorCarga
+        ) {
+
+          <div class="form-error">
+            {{ mensajeError }}
+          </div>
+
+        }
+
+        <!-- FOOTER -->
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="cerrarFormulario()"
+            [disabled]="guardando"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+            [disabled]="guardando"
+          >
+
+            @if (guardando) {
+
+              Guardando...
+
+            } @else if (modoEdicion) {
+
+              Guardar cambios
+
+            } @else {
+
+              Crear cliente
+
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+}

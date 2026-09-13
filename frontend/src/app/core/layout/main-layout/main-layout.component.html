@@ -1,0 +1,951 @@
+<div
+  class="app-layout"
+  [class.sidebar-collapsed]="menuColapsado"
+>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+      <div class="brand-logo">
+        F
+      </div>
+
+      <div
+        class="brand-content"
+        *ngIf="!menuColapsado"
+      >
+
+        <strong>
+          Flow<span>B2B</span>
+        </strong>
+
+        <small>
+          GESTIÓN COMERCIAL
+        </small>
+
+      </div>
+
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <span
+        class="menu-title"
+        *ngIf="!menuColapsado"
+      >
+        GENERAL
+      </span>
+
+      <!-- DASHBOARD -->
+      <a
+        class="menu-item"
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{
+          exact: true
+        }"
+        title="Dashboard"
+      >
+
+        <span class="menu-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <rect
+              x="3"
+              y="3"
+              width="7"
+              height="7"
+              rx="1"
+            ></rect>
+
+            <rect
+              x="14"
+              y="3"
+              width="7"
+              height="7"
+              rx="1"
+            ></rect>
+
+            <rect
+              x="3"
+              y="14"
+              width="7"
+              height="7"
+              rx="1"
+            ></rect>
+
+            <rect
+              x="14"
+              y="14"
+              width="7"
+              height="7"
+              rx="1"
+            ></rect>
+
+          </svg>
+
+        </span>
+
+        <span *ngIf="!menuColapsado">
+          Dashboard
+        </span>
+
+      </a>
+
+      <!-- CLIENTES -->
+      <a
+        class="menu-item"
+        routerLink="/clientes"
+        routerLinkActive="active"
+        title="Clientes"
+      >
+
+        <span class="menu-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <circle
+              cx="9"
+              cy="8"
+              r="4"
+            ></circle>
+
+            <path
+              d="M3 21v-2a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v2"
+            ></path>
+
+            <path
+              d="M17 11a4 4 0 0 0 0-6"
+            ></path>
+
+          </svg>
+
+        </span>
+
+        <span *ngIf="!menuColapsado">
+          Clientes
+        </span>
+
+      </a>
+
+      <!-- SOLICITUDES -->
+      <a
+        class="menu-item"
+        routerLink="/solicitudes"
+        routerLinkActive="active"
+        title="Solicitudes"
+      >
+
+        <span class="menu-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <path
+              d="M6 2h9l4 4v16H6z"
+            ></path>
+
+            <path
+              d="M15 2v5h5"
+            ></path>
+
+            <path
+              d="M9 12h6"
+            ></path>
+
+            <path
+              d="M9 16h6"
+            ></path>
+
+          </svg>
+
+        </span>
+
+        <span *ngIf="!menuColapsado">
+          Solicitudes
+        </span>
+
+      </a>
+
+      <!-- COTIZACIONES -->
+      <a
+        class="menu-item"
+        routerLink="/cotizaciones"
+        routerLinkActive="active"
+        title="Cotizaciones"
+      >
+
+        <span class="menu-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <rect
+              x="4"
+              y="3"
+              width="16"
+              height="18"
+              rx="2"
+            ></rect>
+
+            <path d="M8 8h8"></path>
+
+            <path d="M8 12h8"></path>
+
+            <path d="M8 16h5"></path>
+
+          </svg>
+
+        </span>
+
+        <span *ngIf="!menuColapsado">
+          Cotizaciones
+        </span>
+
+      </a>
+
+      <!-- APROBACIONES -->
+      <a
+        class="menu-item"
+        routerLink="/aprobaciones"
+        routerLinkActive="active"
+        title="Aprobaciones"
+      >
+
+        <span class="menu-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <circle
+              cx="12"
+              cy="12"
+              r="9"
+            ></circle>
+
+            <path
+              d="m8 12 2.5 2.5L16 9"
+            ></path>
+
+          </svg>
+
+        </span>
+
+        <span *ngIf="!menuColapsado">
+          Aprobaciones
+        </span>
+
+      </a>
+
+      <!-- PEDIDOS -->
+      <a
+        class="menu-item"
+        routerLink="/pedidos"
+        routerLinkActive="active"
+        title="Pedidos"
+      >
+
+        <span class="menu-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <path d="M3 6h18"></path>
+
+            <path
+              d="M5 6v14h14V6"
+            ></path>
+
+            <path d="M9 10h6"></path>
+
+            <path d="M9 14h6"></path>
+
+          </svg>
+
+        </span>
+
+        <span *ngIf="!menuColapsado">
+          Pedidos
+        </span>
+
+      </a>
+
+      <span
+        class="menu-title secondary-title"
+        *ngIf="!menuColapsado"
+      >
+        OPERACIONES
+      </span>
+
+      <!-- PRODUCTOS -->
+      <a
+        class="menu-item"
+        routerLink="/productos"
+        routerLinkActive="active"
+        title="Productos"
+      >
+
+        <span class="menu-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <path
+              d="m12 2 9 5-9 5-9-5z"
+            ></path>
+
+            <path
+              d="m3 7 9 5 9-5"
+            ></path>
+
+            <path
+              d="M3 7v10l9 5 9-5V7"
+            ></path>
+
+          </svg>
+
+        </span>
+
+        <span *ngIf="!menuColapsado">
+          Productos
+        </span>
+
+      </a>
+
+      <!-- INVENTARIO -->
+      <a
+        class="menu-item"
+        routerLink="/inventario"
+        routerLinkActive="active"
+        title="Inventario"
+      >
+
+        <span class="menu-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <path
+              d="M4 7h16v14H4z"
+            ></path>
+
+            <path
+              d="M2 3h20v4H2z"
+            ></path>
+
+            <path d="M9 11h6"></path>
+
+          </svg>
+
+        </span>
+
+        <span *ngIf="!menuColapsado">
+          Inventario
+        </span>
+
+      </a>
+
+      <!-- TAREAS -->
+      <a
+        class="menu-item"
+        routerLink="/tareas"
+        routerLinkActive="active"
+        title="Tareas"
+      >
+
+        <span class="menu-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <path d="M9 5h11"></path>
+
+            <path d="M9 12h11"></path>
+
+            <path d="M9 19h11"></path>
+
+            <path
+              d="m3 5 1 1 2-2"
+            ></path>
+
+            <path
+              d="m3 12 1 1 2-2"
+            ></path>
+
+            <path
+              d="m3 19 1 1 2-2"
+            ></path>
+
+          </svg>
+
+        </span>
+
+        <span *ngIf="!menuColapsado">
+          Tareas
+        </span>
+
+      </a>
+
+
+      <!-- DASHBOARD GERENCIAL -->
+      @if (
+        puedeVerDashboardGerencial
+      ) {
+
+        <a
+          class="menu-item"
+          routerLink="/dashboard-gerencial"
+          routerLinkActive="active"
+          title="Dashboard Gerencial"
+        >
+
+          <span class="menu-icon">
+
+            <svg viewBox="0 0 24 24">
+
+              <path
+                d="M4 19V10"
+              ></path>
+
+              <path
+                d="M10 19V5"
+              ></path>
+
+              <path
+                d="M16 19v-7"
+              ></path>
+
+              <path
+                d="M22 19V2"
+              ></path>
+
+            </svg>
+
+          </span>
+
+          <span *ngIf="!menuColapsado">
+            Dashboard Gerencial
+          </span>
+
+        </a>
+
+      }
+
+
+      <!-- ADMINISTRACIÓN -->
+      @if (
+        puedeVerAdministracion
+      ) {
+
+        <span
+          class="menu-title secondary-title"
+          *ngIf="!menuColapsado"
+        >
+          ADMINISTRACIÓN
+        </span>
+
+        <a
+          class="menu-item"
+          routerLink="/administracion"
+          routerLinkActive="active"
+          title="Administración"
+        >
+
+          <span class="menu-icon">
+
+            <svg viewBox="0 0 24 24">
+
+              <circle
+                cx="12"
+                cy="8"
+                r="4"
+              ></circle>
+
+              <path
+                d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"
+              ></path>
+
+              <path
+                d="M19 8v6"
+              ></path>
+
+              <path
+                d="M16 11h6"
+              ></path>
+
+            </svg>
+
+          </span>
+
+          <span *ngIf="!menuColapsado">
+            Administración
+          </span>
+
+        </a>
+
+      }
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+      <div
+        class="sidebar-user"
+        *ngIf="!menuColapsado"
+      >
+
+        <div class="user-avatar">
+
+          {{
+            nombreUsuario
+              .charAt(0)
+              .toUpperCase()
+          }}
+
+        </div>
+
+        <div class="sidebar-user-info">
+
+          <strong>
+            {{ nombreUsuario }}
+          </strong>
+
+          <small>
+            {{ rolUsuario }}
+          </small>
+
+        </div>
+
+      </div>
+
+      <button
+        class="logout-sidebar"
+        type="button"
+        title="Cerrar sesión"
+        (click)="cerrarSesion()"
+      >
+
+        <svg viewBox="0 0 24 24">
+
+          <path
+            d="M10 17l5-5-5-5"
+          ></path>
+
+          <path
+            d="M15 12H3"
+          ></path>
+
+          <path
+            d="M14 3h5a2 2 0 0 1 2 2v14
+               a2 2 0 0 1-2 2h-5"
+          ></path>
+
+        </svg>
+
+        <span *ngIf="!menuColapsado">
+          Cerrar sesión
+        </span>
+
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <section class="main-area">
+
+    <header class="topbar">
+
+      <div class="topbar-left">
+
+        <button
+          class="collapse-button"
+          type="button"
+          (click)="alternarMenu()"
+        >
+
+          <svg viewBox="0 0 24 24">
+
+            <path d="M4 6h16"></path>
+
+            <path d="M4 12h16"></path>
+
+            <path d="M4 18h16"></path>
+
+          </svg>
+
+        </button>
+
+        <div class="topbar-path">
+
+          <span>
+            FlowB2B
+          </span>
+
+          <strong>
+            Panel de gestión
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="topbar-right">
+
+        <!-- NOTIFICACIONES -->
+        <div
+          class="notification-container"
+          (click)="$event.stopPropagation()"
+        >
+
+          <button
+            class="notification-button"
+            type="button"
+            title="Notificaciones"
+            [class.active]="mostrarNotificaciones"
+            (click)="alternarNotificaciones($event)"
+          >
+
+            <svg viewBox="0 0 24 24">
+
+              <path
+                d="M18 8a6 6 0 0 0-12 0
+                   c0 7-3 7-3 9h18
+                   c0-2-3-2-3-9"
+              ></path>
+
+              <path
+                d="M10 21h4"
+              ></path>
+
+            </svg>
+
+            @if (
+              contadorNoLeidas > 0
+            ) {
+
+              <span
+                class="notification-counter"
+              >
+                {{
+                  contadorNoLeidas > 99
+                    ? '99+'
+                    : contadorNoLeidas
+                }}
+              </span>
+
+            }
+
+          </button>
+
+
+          @if (
+            mostrarNotificaciones
+          ) {
+
+            <div
+              class="notifications-dropdown"
+            >
+
+              <div
+                class="notifications-header"
+              >
+
+                <div>
+
+                  <strong>
+                    Notificaciones
+                  </strong>
+
+                  <span>
+                    {{
+                      contadorNoLeidas
+                    }}
+                    sin leer
+                  </span>
+
+                </div>
+
+                <button
+                  type="button"
+                  class="refresh-notifications"
+                  title="Actualizar"
+                  (click)="
+                    cargarNotificaciones()
+                  "
+                >
+
+                  <svg
+                    viewBox="0 0 24 24"
+                  >
+
+                    <path
+                      d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5"
+                    ></path>
+
+                    <path
+                      d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5"
+                    ></path>
+
+                  </svg>
+
+                </button>
+
+              </div>
+
+
+              @if (
+                cargandoNotificaciones
+              ) {
+
+                <div
+                  class="notifications-state"
+                >
+
+                  <div
+                    class="notification-loader"
+                  ></div>
+
+                  <span>
+                    Cargando notificaciones...
+                  </span>
+
+                </div>
+
+              } @else if (
+                errorNotificaciones
+              ) {
+
+                <div
+                  class="notifications-state error"
+                >
+
+                  <strong>
+                    No se pudieron cargar
+                  </strong>
+
+                  <span>
+                    {{
+                      errorNotificaciones
+                    }}
+                  </span>
+
+                  <button
+                    type="button"
+                    (click)="
+                      cargarNotificaciones()
+                    "
+                  >
+                    Reintentar
+                  </button>
+
+                </div>
+
+              } @else if (
+                notificaciones.length === 0
+              ) {
+
+                <div
+                  class="notifications-state empty"
+                >
+
+                  <div
+                    class="empty-notification-icon"
+                  >
+
+                    <svg
+                      viewBox="0 0 24 24"
+                    >
+
+                      <path
+                        d="M18 8a6 6 0 0 0-12 0
+                           c0 7-3 7-3 9h18
+                           c0-2-3-2-3-9"
+                      ></path>
+
+                      <path
+                        d="M10 21h4"
+                      ></path>
+
+                    </svg>
+
+                  </div>
+
+                  <strong>
+                    Sin notificaciones
+                  </strong>
+
+                  <span>
+                    Cuando tengas novedades
+                    aparecerán aquí.
+                  </span>
+
+                </div>
+
+              } @else {
+
+                <div
+                  class="notifications-list"
+                >
+
+                  @for (
+                    notificacion of notificaciones;
+                    track notificacion.idNotificacion
+                  ) {
+
+                    <button
+                      type="button"
+                      class="notification-item"
+                      [class.unread]="
+                        !notificacion.leida
+                      "
+                      (click)="
+                        seleccionarNotificacion(
+                          notificacion,
+                          $event
+                        )
+                      "
+                    >
+
+                      <div
+                        class="notification-type-icon"
+                        [ngClass]="
+                          obtenerClaseTipo(
+                            notificacion.tipo
+                          )
+                        "
+                      >
+
+                        {{
+                          obtenerInicialTipo(
+                            notificacion.tipo
+                          )
+                        }}
+
+                      </div>
+
+                      <div
+                        class="notification-content"
+                      >
+
+                        <div
+                          class="notification-title-row"
+                        >
+
+                          <strong>
+                            {{
+                              notificacion.titulo
+                            }}
+                          </strong>
+
+                          @if (
+                            !notificacion.leida
+                          ) {
+
+                            <span
+                              class="unread-dot"
+                            >
+                            </span>
+
+                          }
+
+                        </div>
+
+                        <p>
+                          {{
+                            notificacion.mensaje
+                          }}
+                        </p>
+
+                        <div
+                          class="notification-meta"
+                        >
+
+                          <span>
+                            {{
+                              notificacion.tipo ||
+                              'GENERAL'
+                            }}
+                          </span>
+
+                          <span>
+                            {{
+                              formatearFechaNotificacion(
+                                notificacion.fechaCreacion
+                              )
+                            }}
+                          </span>
+
+                        </div>
+
+                      </div>
+
+                    </button>
+
+                  }
+
+                </div>
+
+              }
+
+
+              <div
+                class="notifications-footer"
+              >
+
+                <span>
+                  Pulsa una notificación
+                  para marcarla como leída
+                </span>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <div class="topbar-divider">
+        </div>
+
+
+        <div class="topbar-user">
+
+          <div class="topbar-avatar">
+
+            {{
+              nombreUsuario
+                .charAt(0)
+                .toUpperCase()
+            }}
+
+          </div>
+
+          <div class="topbar-user-copy">
+
+            <strong>
+              {{ nombreUsuario }}
+            </strong>
+
+            <span>
+              {{ rolUsuario }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <div class="page-container">
+
+      <router-outlet>
+      </router-outlet>
+
+    </div>
+
+  </section>
+
+</div>

@@ -1,0 +1,1445 @@
+<main class="cotizaciones-page">
+
+  <section class="page-header">
+
+    <div>
+
+      <span class="page-eyebrow">
+        FLUJO COMERCIAL
+      </span>
+
+      <h1>
+        Cotizaciones
+      </h1>
+
+      <p>
+        Prepara propuestas comerciales
+        a partir de las solicitudes de tus clientes.
+      </p>
+
+    </div>
+
+    @if (puedeCrear) {
+
+      <button
+        type="button"
+        class="primary-button"
+        (click)="abrirNuevaCotizacion()"
+      >
+        <span class="button-plus">
+          +
+        </span>
+
+        Nueva cotización
+      </button>
+
+    }
+
+  </section>
+
+  <section class="toolbar">
+
+    <div class="search-box">
+
+      <svg viewBox="0 0 24 24">
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <path
+          d="m20 20-3.5-3.5"
+        ></path>
+      </svg>
+
+      <input
+        type="text"
+        placeholder="Buscar código, cliente, solicitud o estado..."
+        (input)="buscar($event)"
+      >
+
+    </div>
+
+    <div class="toolbar-count">
+
+      <strong>
+        {{ cotizacionesFiltradas.length }}
+      </strong>
+
+      <span>
+        cotizaciones
+      </span>
+
+    </div>
+
+  </section>
+
+  @if (errorCarga) {
+
+    <section class="state-card error-state">
+
+      <strong>
+        No se pudieron cargar las cotizaciones
+      </strong>
+
+      <span>
+        {{ mensajeError }}
+      </span>
+
+      <button
+        type="button"
+        (click)="cargarDatos()"
+      >
+        Reintentar
+      </button>
+
+    </section>
+
+  } @else if (cargando) {
+
+    <section class="state-card">
+
+      <div class="loader">
+      </div>
+
+      <strong>
+        Cargando cotizaciones...
+      </strong>
+
+    </section>
+
+  } @else if (
+    cotizacionesFiltradas.length === 0
+  ) {
+
+    <section class="state-card">
+
+      <div class="empty-icon">
+        $
+      </div>
+
+      <strong>
+        No hay cotizaciones
+      </strong>
+
+      <span>
+        Las cotizaciones creadas aparecerán aquí.
+      </span>
+
+    </section>
+
+  } @else {
+
+    <section class="table-card">
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Código
+              </th>
+
+              <th>
+                Cliente
+              </th>
+
+              <th>
+                Solicitud
+              </th>
+
+              <th>
+                Total
+              </th>
+
+              <th>
+                Fecha
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th class="actions-column">
+                Acciones
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            @for (
+              cotizacion of cotizacionesFiltradas;
+              track cotizacion.idCotizacion
+            ) {
+
+              <tr>
+
+                <td>
+
+                  <div class="code-cell">
+
+                    <strong>
+                      {{ cotizacion.codigo }}
+                    </strong>
+
+                    <span>
+                      #{{ cotizacion.idCotizacion }}
+                    </span>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <div class="client-cell">
+
+                    <div class="client-avatar">
+
+                      {{
+                        obtenerNombreCliente(
+                          cotizacion.clienteId
+                        )
+                          .charAt(0)
+                          .toUpperCase()
+                      }}
+
+                    </div>
+
+                    <strong>
+
+                      {{
+                        obtenerNombreCliente(
+                          cotizacion.clienteId
+                        )
+                      }}
+
+                    </strong>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <span class="request-code">
+
+                    {{
+                      obtenerCodigoSolicitud(
+                        cotizacion.solicitudId
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <strong class="total-cell">
+
+                    {{
+                      formatearMoneda(
+                        cotizacion.total
+                      )
+                    }}
+
+                  </strong>
+
+                </td>
+
+                <td>
+
+                  <span class="date-cell">
+
+                    {{
+                      formatearFecha(
+                        obtenerFechaCotizacion(
+                          cotizacion
+                        )
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span
+                    class="status-badge"
+                    [class.borrador]="
+                      cotizacion.estado === 'BORRADOR'
+                    "
+                    [class.pendiente]="
+                      cotizacion.estado ===
+                      'PENDIENTE_APROBACION'
+                    "
+                    [class.aprobada]="
+                      cotizacion.estado === 'APROBADA'
+                    "
+                    [class.aceptada]="
+                      cotizacion.estado === 'ACEPTADA'
+                    "
+                    [class.rechazada]="
+                      cotizacion.estado === 'RECHAZADA'
+                    "
+                  >
+
+                    <span class="status-dot">
+                    </span>
+
+                    {{
+                      estadoLegible(
+                        cotizacion.estado
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td class="actions-column">
+
+                  <div class="table-actions">
+
+                    <button
+                      type="button"
+                      class="view-button"
+                      (click)="
+                        verDetalle(
+                          cotizacion
+                        )
+                      "
+                    >
+                      Ver
+                    </button>
+
+                    @if (
+                      cotizacion.estado ===
+                      'BORRADOR' &&
+                      puedeEditar
+                    ) {
+
+                      <button
+                        type="button"
+                        class="approval-small-button"
+                        (click)="
+                          abrirSolicitudAprobacion(
+                            cotizacion
+                          )
+                        "
+                      >
+                        Solicitar aprobación
+                      </button>
+
+                    }
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  }
+
+</main>
+
+<!-- ======================================================
+     NUEVA COTIZACIÓN
+     ====================================================== -->
+
+@if (mostrarFormulario) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarFormulario()"
+  >
+
+    <section
+      class="modal-card quotation-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            COTIZACIÓN COMERCIAL
+          </span>
+
+          <h2>
+            Nueva cotización
+          </h2>
+
+          <p>
+            Selecciona una solicitud y completa
+            las condiciones comerciales.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarFormulario()"
+          [disabled]="guardando"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <form
+        [formGroup]="formularioCotizacion"
+        (ngSubmit)="guardarCotizacion()"
+      >
+
+        <div class="form-grid">
+
+          <div class="form-group full">
+
+            <label>
+              Solicitud *
+            </label>
+
+            <select
+              formControlName="solicitudId"
+              (change)="cambiarSolicitud()"
+            >
+
+              <option value="">
+                Seleccionar solicitud
+              </option>
+
+              @for (
+                solicitud of solicitudes;
+                track solicitud.idSolicitud
+              ) {
+
+                <option
+                  [value]="solicitud.idSolicitud"
+                >
+
+                  {{ solicitud.codigo }}
+                  -
+                  {{
+                    obtenerNombreCliente(
+                      solicitud.clienteId
+                    )
+                  }}
+
+                </option>
+
+              }
+
+            </select>
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Código de cotización *
+            </label>
+
+            <input
+              type="text"
+              formControlName="codigo"
+              maxlength="30"
+              placeholder="Ej. COT-009"
+            >
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Fecha de emisión
+            </label>
+
+            <input
+              type="text"
+              [value]="fechaEmisionActual"
+              readonly
+              tabindex="-1"
+            >
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Fecha de vencimiento
+            </label>
+
+            <input
+              type="datetime-local"
+              formControlName="fechaVencimiento"
+            >
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Descuento general %
+            </label>
+
+            <input
+              type="number"
+              formControlName="porcentajeDescuento"
+              min="0"
+              max="100"
+              step="1"
+            >
+
+          </div>
+
+          <div class="form-group full">
+
+            <label>
+              Observaciones
+            </label>
+
+            <textarea
+              rows="3"
+              formControlName="observaciones"
+              placeholder="Condiciones comerciales, plazo, entrega, etc."
+            ></textarea>
+
+          </div>
+
+          <div class="section-title full">
+
+            <div>
+
+              <strong>
+                Productos de la solicitud
+              </strong>
+
+              <span>
+                Define precios y descuentos.
+              </span>
+
+            </div>
+
+          </div>
+
+          <div
+            class="products-container full"
+            formArrayName="detalles"
+          >
+
+            @if (detalles.length === 0) {
+
+              <div class="no-products">
+
+                Selecciona una solicitud para
+                cargar sus productos.
+
+              </div>
+
+            }
+
+            @for (
+              detalle of detalles.controls;
+              track $index;
+              let i = $index
+            ) {
+
+              <div
+                class="product-row"
+                [formGroupName]="i"
+              >
+
+                <div class="product-number">
+                  {{ i + 1 }}
+                </div>
+
+                <div class="product-information">
+
+                  <span>
+                    Producto
+                  </span>
+
+                  <strong>
+
+                    {{
+                      obtenerCodigoProducto(
+                        detalle.get(
+                          'productoId'
+                        )?.value
+                      )
+                    }}
+
+                    -
+
+                    {{
+                      obtenerNombreProducto(
+                        detalle.get(
+                          'productoId'
+                        )?.value
+                      )
+                    }}
+
+                  </strong>
+
+                </div>
+
+                <div class="field-small">
+
+                  <label>
+                    Cantidad
+                  </label>
+
+                  <input
+                    type="number"
+                    formControlName="cantidad"
+                    min="0.01"
+                    step="1"
+                  >
+
+                </div>
+
+                <div class="field-small">
+
+                  <label>
+                    Precio unitario
+                  </label>
+
+                  <input
+                    type="number"
+                    formControlName="precioUnitario"
+                    min="0"
+                    step="0.01"
+                  >
+
+                </div>
+
+                <div class="field-small">
+
+                  <label>
+                    Desc. %
+                  </label>
+
+                  <input
+                    type="number"
+                    formControlName="porcentajeDescuento"
+                    min="0"
+                    max="100"
+                    step="1"
+                  >
+
+                </div>
+
+                <div class="line-total">
+
+                  <span>
+                    Subtotal
+                  </span>
+
+                  <strong>
+
+                    {{
+                      formatearMoneda(
+                        calcularSubtotalLinea(
+                          i
+                        )
+                      )
+                    }}
+
+                  </strong>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+          @if (
+            detalles.length > 0
+          ) {
+
+            <div class="summary-card full">
+
+              <div>
+
+                <span>
+                  Subtotal
+                </span>
+
+                <strong>
+
+                  {{
+                    formatearMoneda(
+                      calcularSubtotalPreview()
+                    )
+                  }}
+
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Descuento general
+                </span>
+
+                <strong>
+
+                  -
+                  {{
+                    formatearMoneda(
+                      calcularDescuentoGeneralPreview()
+                    )
+                  }}
+
+                </strong>
+
+              </div>
+
+              <div class="summary-total">
+
+                <span>
+                  Total estimado
+                </span>
+
+                <strong>
+
+                  {{
+                    formatearMoneda(
+                      calcularTotalPreview()
+                    )
+                  }}
+
+                </strong>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+        @if (mensajeError) {
+
+          <div class="form-error">
+
+            {{ mensajeError }}
+
+          </div>
+
+        }
+
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="cerrarFormulario()"
+            [disabled]="guardando"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+            [disabled]="
+              guardando ||
+              detalles.length === 0
+            "
+          >
+
+            @if (guardando) {
+
+              Guardando...
+
+            } @else {
+
+              Crear cotización
+
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+}
+
+<!-- ======================================================
+     DETALLE COTIZACIÓN
+     ====================================================== -->
+
+@if (
+  mostrarDetalle &&
+  cotizacionSeleccionada
+) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarDetalle()"
+  >
+
+    <section
+      class="modal-card detail-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            DETALLE DE COTIZACIÓN
+          </span>
+
+          <h2>
+            {{ cotizacionSeleccionada.codigo }}
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarDetalle()"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <div class="detail-content">
+
+        <div class="detail-grid">
+
+          <div>
+
+            <span>
+              Cliente
+            </span>
+
+            <strong>
+
+              {{
+                obtenerNombreCliente(
+                  cotizacionSeleccionada
+                    .clienteId
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Solicitud
+            </span>
+
+            <strong>
+
+              {{
+                obtenerCodigoSolicitud(
+                  cotizacionSeleccionada
+                    .solicitudId
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Estado
+            </span>
+
+            <strong>
+
+              {{
+                estadoLegible(
+                  cotizacionSeleccionada
+                    .estado
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Fecha de emisión
+            </span>
+
+            <strong>
+
+              {{
+                formatearFecha(
+                  obtenerFechaCotizacion(
+                    cotizacionSeleccionada
+                  )
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Fecha de vencimiento
+            </span>
+
+            <strong>
+
+              {{
+                formatearFecha(
+                  cotizacionSeleccionada
+                    .fechaVencimiento
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+        </div>
+
+        @if (
+          cotizacionSeleccionada
+            .observaciones
+        ) {
+
+          <div class="observations-box">
+
+            <span>
+              Observaciones
+            </span>
+
+            <p>
+
+              {{
+                cotizacionSeleccionada
+                  .observaciones
+              }}
+
+            </p>
+
+          </div>
+
+        }
+
+        <div class="detail-products">
+
+          <h3>
+            Detalle comercial
+          </h3>
+
+          @for (
+            detalle
+            of cotizacionSeleccionada
+              .detalles;
+            track detalle.idDetalle
+          ) {
+
+            <div class="detail-product-row">
+
+              <div>
+
+                <strong>
+
+                  {{
+                    obtenerNombreProducto(
+                      detalle.productoId
+                    )
+                  }}
+
+                </strong>
+
+                <span>
+
+                  {{
+                    obtenerCodigoProducto(
+                      detalle.productoId
+                    )
+                  }}
+
+                </span>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Cantidad
+                </span>
+
+                <strong>
+                  {{ detalle.cantidad }}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Precio
+                </span>
+
+                <strong>
+
+                  {{
+                    formatearMoneda(
+                      detalle.precioUnitario
+                    )
+                  }}
+
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Desc.
+                </span>
+
+                <strong>
+                  {{
+                    detalle.porcentajeDescuento
+                  }}%
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Subtotal
+                </span>
+
+                <strong>
+
+                  {{
+                    formatearMoneda(
+                      detalle.subtotal
+                    )
+                  }}
+
+                </strong>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+        <div class="detail-summary">
+
+          <div>
+
+            <span>
+              Subtotal
+            </span>
+
+            <strong>
+
+              {{
+                formatearMoneda(
+                  cotizacionSeleccionada
+                    .subtotal
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Descuento general
+            </span>
+
+            <strong>
+
+              -
+              {{
+                formatearMoneda(
+                  cotizacionSeleccionada
+                    .descuento
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Impuesto
+            </span>
+
+            <strong>
+
+              {{
+                formatearMoneda(
+                  cotizacionSeleccionada
+                    .impuesto
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div class="final-total">
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+
+              {{
+                formatearMoneda(
+                  cotizacionSeleccionada
+                    .total
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+        </div>
+
+        @if (
+          cotizacionSeleccionada.estado ===
+          'BORRADOR' &&
+          puedeEditar
+        ) {
+
+          <div class="approval-section">
+
+            <div>
+
+              <strong>
+                Pendiente de aprobación interna
+              </strong>
+
+              <span>
+                Envía esta cotización para que
+                un usuario autorizado pueda revisarla.
+              </span>
+
+            </div>
+
+            <button
+              type="button"
+              class="approval-button"
+              (click)="
+                abrirSolicitudAprobacion(
+                  cotizacionSeleccionada
+                )
+              "
+            >
+              Solicitar aprobación
+            </button>
+
+          </div>
+
+        }
+
+        @if (
+          cotizacionSeleccionada.estado ===
+          'PENDIENTE_APROBACION'
+        ) {
+
+          <div class="pending-section">
+
+            <div>
+
+              <strong>
+                Aprobación solicitada
+              </strong>
+
+              <span>
+                Esta cotización está esperando
+                la decisión de un aprobador.
+              </span>
+
+            </div>
+
+          </div>
+
+        }
+
+        @if (
+          cotizacionSeleccionada.estado ===
+          'APROBADA' &&
+          puedeEditar
+        ) {
+
+          <div class="accept-section">
+
+            <div>
+
+              <strong>
+                Aprobación interna completada
+              </strong>
+
+              <span>
+                Confirma la aceptación del cliente
+                para continuar hacia Pedido.
+              </span>
+
+            </div>
+
+            <button
+              type="button"
+              class="accept-button"
+              [disabled]="aceptando"
+              (click)="
+                aceptarCotizacion(
+                  cotizacionSeleccionada
+                )
+              "
+            >
+
+              @if (aceptando) {
+
+                Procesando...
+
+              } @else {
+
+                Cliente aceptó
+
+              }
+
+            </button>
+
+          </div>
+
+        }
+
+      </div>
+
+    </section>
+
+  </div>
+
+}
+
+<!-- ======================================================
+     SOLICITAR APROBACIÓN
+     ====================================================== -->
+
+@if (
+  mostrarSolicitudAprobacion &&
+  cotizacionParaAprobacion
+) {
+
+  <div
+    class="modal-backdrop"
+    (click)="
+      cerrarSolicitudAprobacion()
+    "
+  >
+
+    <section
+      class="modal-card approval-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            SOLICITAR APROBACIÓN
+          </span>
+
+          <h2>
+            {{ cotizacionParaAprobacion.codigo }}
+          </h2>
+
+          <p>
+            Envía la cotización para revisión
+            y autorización interna.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="
+            cerrarSolicitudAprobacion()
+          "
+          [disabled]="solicitandoAprobacion"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <form
+        [formGroup]="formularioAprobacion"
+        (ngSubmit)="enviarAprobacion()"
+      >
+
+        <div class="approval-summary">
+
+          <div>
+
+            <span>
+              Cliente
+            </span>
+
+            <strong>
+
+              {{
+                obtenerNombreCliente(
+                  cotizacionParaAprobacion
+                    .clienteId
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+
+              {{
+                formatearMoneda(
+                  cotizacionParaAprobacion
+                    .total
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            Motivo de aprobación
+          </label>
+
+          <textarea
+            rows="4"
+            maxlength="255"
+            formControlName="motivo"
+            placeholder="Ej. Descuento comercial requiere aprobación"
+          ></textarea>
+
+          <span class="field-help">
+            Máximo 255 caracteres.
+          </span>
+
+        </div>
+
+        @if (mensajeError) {
+
+          <div class="form-error">
+            {{ mensajeError }}
+          </div>
+
+        }
+
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="
+              cerrarSolicitudAprobacion()
+            "
+            [disabled]="solicitandoAprobacion"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="approval-button"
+            [disabled]="
+              solicitandoAprobacion ||
+              formularioAprobacion.invalid
+            "
+          >
+
+            @if (
+              solicitandoAprobacion
+            ) {
+
+              Enviando...
+
+            } @else {
+
+              Enviar a aprobación
+
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+}

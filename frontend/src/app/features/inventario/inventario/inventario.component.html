@@ -1,0 +1,673 @@
+<main class="inventario-page">
+
+  <section class="page-header">
+
+    <div>
+
+      <span class="page-eyebrow">
+        OPERACIONES
+      </span>
+
+      <h1>
+        Inventario
+      </h1>
+
+      <p>
+        Supervisa existencias,
+        reservas y disponibilidad
+        de los productos.
+      </p>
+
+    </div>
+
+  </section>
+
+  <section class="summary-grid">
+
+  <article class="summary-card">
+
+    <span>
+      Productos registrados
+    </span>
+
+    <strong>
+      {{ inventarios.length }}
+    </strong>
+
+    <small>
+      Con control de inventario
+    </small>
+
+  </article>
+
+</section>
+
+  <section class="toolbar">
+
+    <div class="search-box">
+
+      <svg viewBox="0 0 24 24">
+
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <path
+          d="m20 20-3.5-3.5"
+        ></path>
+
+      </svg>
+
+      <input
+        type="text"
+        placeholder="Buscar producto o código..."
+        (input)="buscar($event)"
+      >
+
+    </div>
+
+    <div class="filters">
+
+      <button
+        type="button"
+        [class.active]="
+          filtroStock === 'TODOS'
+        "
+        (click)="
+          cambiarFiltroStock(
+            'TODOS'
+          )
+        "
+      >
+        Todos
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroStock === 'BAJO'
+        "
+        (click)="
+          cambiarFiltroStock(
+            'BAJO'
+          )
+        "
+      >
+        Stock bajo
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroStock ===
+          'SIN_STOCK'
+        "
+        (click)="
+          cambiarFiltroStock(
+            'SIN_STOCK'
+          )
+        "
+      >
+        Sin stock
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroStock ===
+          'RESERVADO'
+        "
+        (click)="
+          cambiarFiltroStock(
+            'RESERVADO'
+          )
+        "
+      >
+        Con reservas
+      </button>
+
+    </div>
+
+    <div class="toolbar-count">
+
+      <strong>
+        {{ inventariosFiltrados.length }}
+      </strong>
+
+      <span>
+        productos
+      </span>
+
+    </div>
+
+  </section>
+
+  @if (errorCarga) {
+
+    <section class="state-card error-state">
+
+      <strong>
+        No se pudo cargar el inventario
+      </strong>
+
+      <span>
+        {{ mensajeError }}
+      </span>
+
+      <button
+        type="button"
+        (click)="cargarDatos()"
+      >
+        Reintentar
+      </button>
+
+    </section>
+
+  } @else if (cargando) {
+
+    <section class="state-card">
+
+      <div class="loader">
+      </div>
+
+      <strong>
+        Cargando inventario...
+      </strong>
+
+    </section>
+
+  } @else if (
+    inventariosFiltrados.length ===
+    0
+  ) {
+
+    <section class="state-card">
+
+      <strong>
+        No hay productos
+      </strong>
+
+      <span>
+        No existen registros para
+        el filtro seleccionado.
+      </span>
+
+    </section>
+
+  } @else {
+
+    <section class="table-card">
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Producto
+              </th>
+
+              <th>
+                Stock actual
+              </th>
+
+              <th>
+                Reservado
+              </th>
+
+              <th>
+                Disponible
+              </th>
+
+              <th>
+                Stock mínimo
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th>
+                Actualización
+              </th>
+
+              <th class="actions-column">
+                Acciones
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            @for (
+              inventario
+              of inventariosFiltrados;
+              track inventario.idInventario
+            ) {
+
+              <tr>
+
+                <td>
+
+                  <div class="product-cell">
+
+                    <div class="product-icon">
+
+                      {{
+                        obtenerNombreProducto(
+                          inventario.productoId
+                        )
+                          .charAt(0)
+                          .toUpperCase()
+                      }}
+
+                    </div>
+
+                    <div>
+
+                      <strong>
+
+                        {{
+                          obtenerNombreProducto(
+                            inventario.productoId
+                          )
+                        }}
+
+                      </strong>
+
+                      <span>
+
+                        {{
+                          obtenerCodigoProducto(
+                            inventario.productoId
+                          )
+                        }}
+
+                        ·
+
+                        {{
+                          obtenerUnidadMedida(
+                            inventario.productoId
+                          )
+                        }}
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <strong class="stock-main">
+
+                    {{
+                      formatearCantidad(
+                        inventario.stockActual
+                      )
+                    }}
+
+                  </strong>
+
+                </td>
+
+                <td>
+
+                  <strong
+                    class="stock-reserved"
+                  >
+
+                    {{
+                      formatearCantidad(
+                        inventario.stockReservado
+                      )
+                    }}
+
+                  </strong>
+
+                </td>
+
+                <td>
+
+                  <strong
+                    class="stock-available"
+                    [class.stock-warning]="
+                      inventario.stockDisponible
+                      <=
+                      inventario.stockMinimo
+                    "
+                  >
+
+                    {{
+                      formatearCantidad(
+                        inventario.stockDisponible
+                      )
+                    }}
+
+                  </strong>
+
+                </td>
+
+                <td>
+
+                  {{
+                    formatearCantidad(
+                      inventario.stockMinimo
+                    )
+                  }}
+
+                </td>
+
+                <td>
+
+                  <span
+                    class="status-badge"
+                    [class.normal]="
+                      obtenerEstadoStock(
+                        inventario
+                      ) === 'DISPONIBLE'
+                    "
+                    [class.bajo]="
+                      obtenerEstadoStock(
+                        inventario
+                      ) === 'STOCK BAJO'
+                    "
+                    [class.sin-stock]="
+                      obtenerEstadoStock(
+                        inventario
+                      ) === 'SIN STOCK'
+                    "
+                  >
+
+                    <span class="status-dot">
+                    </span>
+
+                    {{
+                      obtenerEstadoStock(
+                        inventario
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span class="date-cell">
+
+                    {{
+                      formatearFecha(
+                        inventario
+                          .fechaActualizacion
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td class="actions-column">
+
+                  @if (puedeEditar) {
+
+                    <button
+                      type="button"
+                      class="edit-button"
+                      (click)="
+                        abrirEdicion(
+                          inventario
+                        )
+                      "
+                    >
+                      Ajustar
+                    </button>
+
+                  } @else {
+
+                    <span class="read-only">
+                      Solo lectura
+                    </span>
+
+                  }
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  }
+
+</main>
+
+@if (
+  mostrarEdicion &&
+  inventarioSeleccionado
+) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarEdicion()"
+  >
+
+    <section
+      class="modal-card"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            AJUSTE DE INVENTARIO
+          </span>
+
+          <h2>
+
+            {{
+              obtenerNombreProducto(
+                inventarioSeleccionado
+                  .productoId
+              )
+            }}
+
+          </h2>
+
+          <p>
+
+            {{
+              obtenerCodigoProducto(
+                inventarioSeleccionado
+                  .productoId
+              )
+            }}
+
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarEdicion()"
+          [disabled]="guardando"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <form
+        [formGroup]="formularioInventario"
+        (ngSubmit)="guardarInventario()"
+      >
+
+        <div class="inventory-current">
+
+          <div>
+
+            <span>
+              Disponible actualmente
+            </span>
+
+            <strong>
+
+              {{
+                formatearCantidad(
+                  inventarioSeleccionado
+                    .stockDisponible
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Reservado por pedidos
+            </span>
+
+            <strong>
+
+              {{
+                formatearCantidad(
+                  inventarioSeleccionado
+                    .stockReservado
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+        </div>
+
+        <div class="form-grid">
+
+          <div class="form-group">
+
+            <label>
+              Stock actual *
+            </label>
+
+            <input
+              type="number"
+              min="0"
+              step="1"
+              formControlName="stockActual"
+            >
+
+            <span class="field-help">
+              Existencia física total.
+            </span>
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Stock reservado
+            </label>
+
+            <input
+              type="number"
+              formControlName="stockReservado"
+              readonly
+            >
+
+            <span class="field-help">
+              Lo administra automáticamente
+              el sistema.
+            </span>
+
+          </div>
+
+          <div class="form-group full">
+
+            <label>
+              Stock mínimo *
+            </label>
+
+            <input
+              type="number"
+              min="0"
+              step="1"
+              formControlName="stockMinimo"
+            >
+
+            <span class="field-help">
+              Nivel usado para alertas
+              de reposición.
+            </span>
+
+          </div>
+
+        </div>
+
+        @if (mensajeError) {
+
+          <div class="form-error">
+            {{ mensajeError }}
+          </div>
+
+        }
+
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="cerrarEdicion()"
+            [disabled]="guardando"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+            [disabled]="guardando"
+          >
+
+            @if (guardando) {
+
+              Guardando...
+
+            } @else {
+
+              Guardar ajuste
+
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+}

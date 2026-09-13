@@ -1,0 +1,66 @@
+# ==========================================
+# FLOWB2B - GITIGNORE
+# ==========================================
+
+# ------------------------------------------
+# ANGULAR / NODE
+# ------------------------------------------
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.cache/
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# ------------------------------------------
+# SPRING BOOT / MAVEN
+# ------------------------------------------
+backend/target/
+backend/.mvn/timing.properties
+
+# ------------------------------------------
+# ECLIPSE / SPRING TOOLS
+# ------------------------------------------
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/.springBeans
+backend/.sts4-cache/
+
+# ------------------------------------------
+# VS CODE
+# ------------------------------------------
+.vscode/
+
+# ------------------------------------------
+# INTELLIJ
+# ------------------------------------------
+.idea/
+*.iml
+
+# ------------------------------------------
+# SISTEMA OPERATIVO
+# ------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ------------------------------------------
+# VARIABLES DE ENTORNO / SECRETOS
+# ------------------------------------------
+.env
+.env.*
+!.env.example
+
+backend/.env
+frontend/.env
+
+# ------------------------------------------
+# ARCHIVOS TEMPORALES
+# ------------------------------------------
+*.log
+*.tmp
+*.temp

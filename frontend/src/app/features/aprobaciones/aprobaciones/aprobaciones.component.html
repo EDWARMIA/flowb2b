@@ -1,0 +1,858 @@
+<main class="aprobaciones-page">
+
+  <section class="page-header">
+
+    <div>
+
+      <span class="page-eyebrow">
+        CONTROL COMERCIAL
+      </span>
+
+      <h1>
+        Aprobaciones
+      </h1>
+
+      <p>
+        Revisa y responde las cotizaciones
+        que requieren autorización interna.
+      </p>
+
+    </div>
+
+  </section>
+
+  <section class="toolbar">
+
+    <div class="search-box">
+
+      <svg viewBox="0 0 24 24">
+
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <path
+          d="m20 20-3.5-3.5"
+        ></path>
+
+      </svg>
+
+      <input
+        type="text"
+        placeholder="Buscar cotización, cliente, motivo o estado..."
+        (input)="buscar($event)"
+      >
+
+    </div>
+
+    <div class="filters">
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado === 'TODAS'
+        "
+        (click)="
+          cambiarFiltroEstado('TODAS')
+        "
+      >
+        Todas
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado === 'PENDIENTE'
+        "
+        (click)="
+          cambiarFiltroEstado('PENDIENTE')
+        "
+      >
+        Pendientes
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado === 'APROBADA'
+        "
+        (click)="
+          cambiarFiltroEstado('APROBADA')
+        "
+      >
+        Aprobadas
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado === 'RECHAZADA'
+        "
+        (click)="
+          cambiarFiltroEstado('RECHAZADA')
+        "
+      >
+        Rechazadas
+      </button>
+
+    </div>
+
+    <div class="toolbar-count">
+
+      <strong>
+        {{ aprobacionesFiltradas.length }}
+      </strong>
+
+      <span>
+        registros
+      </span>
+
+    </div>
+
+  </section>
+
+  @if (errorCarga) {
+
+    <section class="state-card error-state">
+
+      <strong>
+        No se pudieron cargar las aprobaciones
+      </strong>
+
+      <span>
+        {{ mensajeError }}
+      </span>
+
+      <button
+        type="button"
+        (click)="cargarDatos()"
+      >
+        Reintentar
+      </button>
+
+    </section>
+
+  }
+
+  @else if (cargando) {
+
+    <section class="state-card">
+
+      <div class="loader">
+      </div>
+
+      <strong>
+        Cargando aprobaciones...
+      </strong>
+
+    </section>
+
+  }
+
+  @else if (
+    aprobacionesFiltradas.length === 0
+  ) {
+
+    <section class="state-card">
+
+      <div class="empty-icon">
+
+        <svg viewBox="0 0 24 24">
+
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+          ></circle>
+
+          <path
+            d="m8 12 2.5 2.5L16 9"
+          ></path>
+
+        </svg>
+
+      </div>
+
+      <strong>
+        No hay aprobaciones
+      </strong>
+
+      <span>
+        No existen registros para el filtro seleccionado.
+      </span>
+
+    </section>
+
+  }
+
+  @else {
+
+    <section class="table-card">
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Cotización
+              </th>
+
+              <th>
+                Cliente
+              </th>
+
+              <th>
+                Total
+              </th>
+
+              <th>
+                Motivo
+              </th>
+
+              <th>
+                Fecha solicitud
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th class="actions-column">
+                Acciones
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            @for (
+              aprobacion of aprobacionesFiltradas;
+              track aprobacion.idAprobacion
+            ) {
+
+              <tr>
+
+                <td>
+
+                  <div class="code-cell">
+
+                    <strong>
+
+                      {{
+                        obtenerCodigoCotizacion(
+                          aprobacion.cotizacionId
+                        )
+                      }}
+
+                    </strong>
+
+                    <span>
+                      Aprobación
+                      #{{ aprobacion.idAprobacion }}
+                    </span>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <div class="client-cell">
+
+                    <div class="client-avatar">
+
+                      {{
+                        obtenerClienteCotizacion(
+                          aprobacion.cotizacionId
+                        )
+                          .charAt(0)
+                          .toUpperCase()
+                      }}
+
+                    </div>
+
+                    <strong>
+
+                      {{
+                        obtenerClienteCotizacion(
+                          aprobacion.cotizacionId
+                        )
+                      }}
+
+                    </strong>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <strong class="total-cell">
+
+                    {{
+                      formatearMoneda(
+                        obtenerTotalCotizacion(
+                          aprobacion.cotizacionId
+                        )
+                      )
+                    }}
+
+                  </strong>
+
+                </td>
+
+                <td>
+
+                  <span class="reason-cell">
+
+                    {{
+                      aprobacion.motivo
+                      || 'Sin motivo especificado'
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span class="date-cell">
+
+                    {{
+                      formatearFecha(
+                        aprobacion.fechaSolicitud
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span
+                    class="status-badge"
+                    [class.pendiente]="
+                      aprobacion.estado ===
+                      'PENDIENTE'
+                    "
+                    [class.aprobada]="
+                      aprobacion.estado ===
+                      'APROBADA'
+                    "
+                    [class.rechazada]="
+                      aprobacion.estado ===
+                      'RECHAZADA'
+                    "
+                  >
+
+                    <span class="status-dot">
+                    </span>
+
+                    {{ aprobacion.estado }}
+
+                  </span>
+
+                </td>
+
+                <td class="actions-column">
+
+                  <div class="action-group">
+
+                    <button
+                      type="button"
+                      class="view-button"
+                      (click)="
+                        verDetalle(
+                          aprobacion
+                        )
+                      "
+                    >
+                      Ver
+                    </button>
+
+                    @if (
+                      puedeResponder(
+                        aprobacion
+                      )
+                    ) {
+
+                      <button
+                        type="button"
+                        class="approve-small"
+                        (click)="
+                          abrirRespuesta(
+                            aprobacion,
+                            'APROBAR'
+                          )
+                        "
+                      >
+                        Aprobar
+                      </button>
+
+                    }
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  }
+
+</main>
+
+<!-- =====================================================
+     DETALLE
+     ===================================================== -->
+
+@if (
+  mostrarDetalle &&
+  aprobacionSeleccionada
+) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarDetalle()"
+  >
+
+    <section
+      class="modal-card"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            APROBACIÓN COMERCIAL
+          </span>
+
+          <h2>
+
+            {{
+              obtenerCodigoCotizacion(
+                aprobacionSeleccionada
+                  .cotizacionId
+              )
+            }}
+
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarDetalle()"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <div class="detail-content">
+
+        <div class="detail-grid">
+
+          <div>
+
+            <span>
+              Cliente
+            </span>
+
+            <strong>
+
+              {{
+                obtenerClienteCotizacion(
+                  aprobacionSeleccionada
+                    .cotizacionId
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Total cotización
+            </span>
+
+            <strong>
+
+              {{
+                formatearMoneda(
+                  obtenerTotalCotizacion(
+                    aprobacionSeleccionada
+                      .cotizacionId
+                  )
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Estado
+            </span>
+
+            <strong>
+              {{
+                aprobacionSeleccionada.estado
+              }}
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Fecha de solicitud
+            </span>
+
+            <strong>
+
+              {{
+                formatearFecha(
+                  aprobacionSeleccionada
+                    .fechaSolicitud
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Fecha de respuesta
+            </span>
+
+            <strong>
+
+              {{
+                formatearFecha(
+                  aprobacionSeleccionada
+                    .fechaRespuesta
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Solicitante
+            </span>
+
+            <strong>
+              Usuario
+              #{{ aprobacionSeleccionada.solicitanteId }}
+            </strong>
+
+          </div>
+
+        </div>
+
+        <div class="information-box">
+
+          <span>
+            Motivo
+          </span>
+
+          <p>
+
+            {{
+              aprobacionSeleccionada.motivo
+              || 'Sin motivo especificado'
+            }}
+
+          </p>
+
+        </div>
+
+        @if (
+          aprobacionSeleccionada.comentario
+        ) {
+
+          <div class="information-box">
+
+            <span>
+              Comentario de respuesta
+            </span>
+
+            <p>
+              {{
+                aprobacionSeleccionada.comentario
+              }}
+            </p>
+
+          </div>
+
+        }
+
+        @if (
+          aprobacionSeleccionada.estado ===
+          'PENDIENTE'
+        ) {
+
+          @if (
+            esPropia(
+              aprobacionSeleccionada
+            )
+          ) {
+
+            <div class="own-warning">
+
+              <strong>
+                Separación de funciones
+              </strong>
+
+              <span>
+                Tú solicitaste esta aprobación.
+                Debe responderla otro usuario autorizado.
+              </span>
+
+            </div>
+
+          }
+
+          @else if (
+            puedeResponder(
+              aprobacionSeleccionada
+            )
+          ) {
+
+            <div class="decision-actions">
+
+              <button
+                type="button"
+                class="reject-button"
+                (click)="
+                  abrirRespuesta(
+                    aprobacionSeleccionada,
+                    'RECHAZAR'
+                  )
+                "
+              >
+                Rechazar
+              </button>
+
+              <button
+                type="button"
+                class="approve-button"
+                (click)="
+                  abrirRespuesta(
+                    aprobacionSeleccionada,
+                    'APROBAR'
+                  )
+                "
+              >
+                Aprobar cotización
+              </button>
+
+            </div>
+
+          }
+
+        }
+
+      </div>
+
+    </section>
+
+  </div>
+
+}
+
+<!-- =====================================================
+     RESPONDER
+     ===================================================== -->
+
+@if (
+  mostrarRespuesta &&
+  aprobacionSeleccionada &&
+  tipoRespuesta
+) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarRespuesta()"
+  >
+
+    <section
+      class="modal-card response-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+
+            {{
+              tipoRespuesta === 'APROBAR'
+              ? 'APROBAR COTIZACIÓN'
+              : 'RECHAZAR COTIZACIÓN'
+            }}
+
+          </span>
+
+          <h2>
+
+            {{
+              obtenerCodigoCotizacion(
+                aprobacionSeleccionada
+                  .cotizacionId
+              )
+            }}
+
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarRespuesta()"
+          [disabled]="procesando"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <form
+        [formGroup]="formularioRespuesta"
+        (ngSubmit)="confirmarRespuesta()"
+      >
+
+        <div class="decision-summary">
+
+          <span>
+            Decisión
+          </span>
+
+          <strong
+            [class.approve-text]="
+              tipoRespuesta === 'APROBAR'
+            "
+            [class.reject-text]="
+              tipoRespuesta === 'RECHAZAR'
+            "
+          >
+
+            {{
+              tipoRespuesta === 'APROBAR'
+              ? 'APROBAR'
+              : 'RECHAZAR'
+            }}
+
+          </strong>
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            Comentario
+          </label>
+
+          <textarea
+            rows="5"
+            maxlength="2000"
+            formControlName="comentario"
+            [placeholder]="
+              tipoRespuesta === 'APROBAR'
+              ? 'Comentario opcional sobre la aprobación...'
+              : 'Indica el motivo del rechazo...'
+            "
+          ></textarea>
+
+        </div>
+
+        @if (mensajeError) {
+
+          <div class="form-error">
+            {{ mensajeError }}
+          </div>
+
+        }
+
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="cerrarRespuesta()"
+            [disabled]="procesando"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            [class.approve-button]="
+              tipoRespuesta === 'APROBAR'
+            "
+            [class.reject-button]="
+              tipoRespuesta === 'RECHAZAR'
+            "
+            [disabled]="procesando"
+          >
+
+            @if (procesando) {
+
+              Procesando...
+
+            } @else if (
+              tipoRespuesta === 'APROBAR'
+            ) {
+
+              Confirmar aprobación
+
+            } @else {
+
+              Confirmar rechazo
+
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+}

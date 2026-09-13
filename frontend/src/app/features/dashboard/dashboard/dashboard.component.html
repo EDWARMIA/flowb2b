@@ -1,0 +1,876 @@
+<main class="dashboard-content">
+
+  <!-- =====================================================
+       ENCABEZADO
+       ===================================================== -->
+
+  <section class="dashboard-header">
+
+    <div class="header-copy">
+
+      <span class="dashboard-eyebrow">
+        RESUMEN GENERAL
+      </span>
+
+      <h1>
+        Dashboard
+      </h1>
+
+      <p>
+        Estado actual de la actividad comercial
+        y operativa de la empresa.
+      </p>
+
+    </div>
+
+
+    <div class="header-actions">
+
+      <!-- FECHA -->
+
+      <div class="date-card">
+
+        <div class="header-icon date-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <rect
+              x="3"
+              y="5"
+              width="18"
+              height="16"
+              rx="2"
+            ></rect>
+
+            <path
+              d="M16 3v4"
+            ></path>
+
+            <path
+              d="M8 3v4"
+            ></path>
+
+            <path
+              d="M3 10h18"
+            ></path>
+
+          </svg>
+
+        </div>
+
+        <div>
+
+          <strong>
+            Hoy
+          </strong>
+
+          <span>
+            {{ obtenerFechaFormateada() }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- ESTADO -->
+
+      <div class="system-card">
+
+        <span class="system-dot">
+        </span>
+
+        <div>
+
+          <strong>
+            Sistema operativo
+          </strong>
+
+          <span>
+            Servicios disponibles
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       TARJETAS RESUMEN
+       ===================================================== -->
+
+  <section class="stats-grid">
+
+
+    <!-- SOLICITUDES -->
+
+    <article class="stat-card">
+
+      <div class="stat-icon blue">
+
+        <svg viewBox="0 0 24 24">
+
+          <path
+            d="M6 2h9l4 4v16H6z"
+          ></path>
+
+          <path
+            d="M15 2v5h5"
+          ></path>
+
+          <path
+            d="M9 12h6"
+          ></path>
+
+          <path
+            d="M9 16h6"
+          ></path>
+
+        </svg>
+
+      </div>
+
+
+      <div class="stat-info">
+
+        <span class="stat-title">
+          Solicitudes
+        </span>
+
+        <div class="stat-value-row">
+
+          <strong class="stat-number">
+            @if (cargando) {
+              --
+            } @else {
+              {{ resumen.solicitudes }}
+            }
+          </strong>
+
+          <span class="metric-color blue-color">
+          </span>
+
+        </div>
+
+        <span class="stat-description">
+          registradas
+        </span>
+
+      </div>
+
+    </article>
+
+
+    <!-- COTIZACIONES -->
+
+    <article class="stat-card">
+
+      <div class="stat-icon violet">
+
+        <svg viewBox="0 0 24 24">
+
+          <rect
+            x="4"
+            y="3"
+            width="16"
+            height="18"
+            rx="2"
+          ></rect>
+
+          <path
+            d="M8 8h8"
+          ></path>
+
+          <path
+            d="M8 12h8"
+          ></path>
+
+          <path
+            d="M8 16h5"
+          ></path>
+
+        </svg>
+
+      </div>
+
+
+      <div class="stat-info">
+
+        <span class="stat-title">
+          Cotizaciones
+        </span>
+
+        <div class="stat-value-row">
+
+          <strong class="stat-number">
+            @if (cargando) {
+              --
+            } @else {
+              {{ resumen.cotizaciones }}
+            }
+          </strong>
+
+          <span class="metric-color violet-color">
+          </span>
+
+        </div>
+
+        <span class="stat-description">
+          generadas
+        </span>
+
+      </div>
+
+    </article>
+
+
+    <!-- PEDIDOS -->
+
+    <article class="stat-card">
+
+      <div class="stat-icon green">
+
+        <svg viewBox="0 0 24 24">
+
+          <path
+            d="M4 8h16v12H4z"
+          ></path>
+
+          <path
+            d="M2 4h20v4H2z"
+          ></path>
+
+        </svg>
+
+      </div>
+
+
+      <div class="stat-info">
+
+        <span class="stat-title">
+          Pedidos
+        </span>
+
+        <div class="stat-value-row">
+
+          <strong class="stat-number">
+            @if (cargando) {
+              --
+            } @else {
+              {{ resumen.pedidos }}
+            }
+          </strong>
+
+          <span class="metric-color green-color">
+          </span>
+
+        </div>
+
+        <span class="stat-description">
+          registrados
+        </span>
+
+      </div>
+
+    </article>
+
+
+    <!-- APROBACIONES -->
+
+    <article class="stat-card">
+
+      <div class="stat-icon orange">
+
+        <svg viewBox="0 0 24 24">
+
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+          ></circle>
+
+          <path
+            d="m8 12 2.5 2.5L16 9"
+          ></path>
+
+        </svg>
+
+      </div>
+
+
+      <div class="stat-info">
+
+        <span class="stat-title">
+          Aprobaciones
+        </span>
+
+        <div class="stat-value-row">
+
+          <strong class="stat-number">
+            @if (cargando) {
+              --
+            } @else {
+              {{ resumen.aprobacionesPendientes }}
+            }
+          </strong>
+
+          <span class="metric-color orange-color">
+          </span>
+
+        </div>
+
+        <span class="stat-description">
+          pendientes
+        </span>
+
+      </div>
+
+    </article>
+
+  </section>
+
+
+  <!-- =====================================================
+       ZONA PRINCIPAL
+       ===================================================== -->
+
+  <section class="dashboard-main-grid">
+
+
+    <!-- ===================================================
+         GRÁFICO PRINCIPAL
+         =================================================== -->
+
+    <article class="analytics-panel">
+
+      <div class="analytics-header">
+
+        <div>
+
+          <span class="analytics-eyebrow">
+            ACTIVIDAD COMERCIAL
+          </span>
+
+          <h2>
+            Perfil operativo actual
+          </h2>
+
+          <p>
+            Comparativa visual de los principales
+            indicadores operativos.
+          </p>
+
+        </div>
+
+
+        @if (errorCarga) {
+
+          <button
+            type="button"
+            class="live-badge error-badge"
+            (click)="cargarResumen()"
+          >
+            Reintentar
+          </button>
+
+        } @else {
+
+          <div class="live-badge">
+
+            <span class="live-dot">
+            </span>
+
+            Datos actuales
+
+          </div>
+
+        }
+
+      </div>
+
+
+      @if (cargando) {
+
+        <div class="chart-message">
+          Cargando información...
+        </div>
+
+      } @else if (errorCarga) {
+
+        <div class="chart-message">
+          No se pudieron cargar los datos.
+        </div>
+
+      } @else {
+
+        <div class="chart-wrapper">
+
+
+          <!-- EJE IZQUIERDO -->
+
+          <div class="y-axis">
+
+            <span>
+              {{ obtenerValorEscala(100) }}
+            </span>
+
+            <span>
+              {{ obtenerValorEscala(75) }}
+            </span>
+
+            <span>
+              {{ obtenerValorEscala(50) }}
+            </span>
+
+            <span>
+              {{ obtenerValorEscala(25) }}
+            </span>
+
+            <span>
+              0
+            </span>
+
+          </div>
+
+
+          <!-- GRÁFICO -->
+
+          <div class="chart-area">
+
+            <svg
+              viewBox="0 0 800 220"
+              preserveAspectRatio="none"
+              role="img"
+              aria-label="Comparación operativa actual"
+            >
+
+
+              <!-- HORIZONTALES -->
+
+              <line
+                x1="35"
+                [attr.y1]="obtenerNivelEscala(100)"
+                x2="760"
+                [attr.y2]="obtenerNivelEscala(100)"
+                class="chart-grid"
+              ></line>
+
+              <line
+                x1="35"
+                [attr.y1]="obtenerNivelEscala(75)"
+                x2="760"
+                [attr.y2]="obtenerNivelEscala(75)"
+                class="chart-grid"
+              ></line>
+
+              <line
+                x1="35"
+                [attr.y1]="obtenerNivelEscala(50)"
+                x2="760"
+                [attr.y2]="obtenerNivelEscala(50)"
+                class="chart-grid"
+              ></line>
+
+              <line
+                x1="35"
+                [attr.y1]="obtenerNivelEscala(25)"
+                x2="760"
+                [attr.y2]="obtenerNivelEscala(25)"
+                class="chart-grid"
+              ></line>
+
+              <line
+                x1="35"
+                y1="205"
+                x2="760"
+                y2="205"
+                class="chart-grid chart-base"
+              ></line>
+
+
+              <!-- VERTICALES -->
+
+              <line
+                x1="55"
+                y1="24"
+                x2="55"
+                y2="205"
+                class="vertical-grid"
+              ></line>
+
+              <line
+                x1="225"
+                y1="24"
+                x2="225"
+                y2="205"
+                class="vertical-grid"
+              ></line>
+
+              <line
+                x1="395"
+                y1="24"
+                x2="395"
+                y2="205"
+                class="vertical-grid"
+              ></line>
+
+              <line
+                x1="565"
+                y1="24"
+                x2="565"
+                y2="205"
+                class="vertical-grid"
+              ></line>
+
+              <line
+                x1="735"
+                y1="24"
+                x2="735"
+                y2="205"
+                class="vertical-grid"
+              ></line>
+
+
+              <!-- SOLICITUDES -->
+
+              <polyline
+                [attr.points]="
+                  obtenerPuntosSolicitudes()
+                "
+                class="metric-line blue-line"
+              ></polyline>
+
+
+              <!-- COTIZACIONES -->
+
+              <polyline
+                [attr.points]="
+                  obtenerPuntosCotizaciones()
+                "
+                class="metric-line violet-line"
+              ></polyline>
+
+
+              <!-- PEDIDOS -->
+
+              <polyline
+                [attr.points]="
+                  obtenerPuntosPedidos()
+                "
+                class="metric-line green-line"
+              ></polyline>
+
+
+              <!-- APROBACIONES -->
+
+              <polyline
+                [attr.points]="
+                  obtenerPuntosAprobaciones()
+                "
+                class="metric-line orange-line"
+              ></polyline>
+
+            </svg>
+
+          </div>
+
+        </div>
+
+
+        <!-- LEYENDA SOLO PARA IDENTIFICAR COLORES -->
+
+        <div class="chart-legend">
+
+          <div>
+
+            <span class="legend-line blue-legend">
+            </span>
+
+            Solicitudes
+
+          </div>
+
+
+          <div>
+
+            <span class="legend-line violet-legend">
+            </span>
+
+            Cotizaciones
+
+          </div>
+
+
+          <div>
+
+            <span class="legend-line green-legend">
+            </span>
+
+            Pedidos
+
+          </div>
+
+
+          <div>
+
+            <span class="legend-line orange-legend">
+            </span>
+
+            Aprobaciones
+
+          </div>
+
+        </div>
+
+      }
+
+    </article>
+
+
+    <!-- ===================================================
+         ACCESOS RÁPIDOS
+         =================================================== -->
+
+    <aside class="quick-panel">
+
+      <div class="quick-header">
+
+        <span>
+          GESTIÓN
+        </span>
+
+        <h2>
+          Accesos rápidos
+        </h2>
+
+        <p>
+          Acciones frecuentes del flujo comercial.
+        </p>
+
+      </div>
+
+
+      <div class="quick-list">
+
+
+        <!-- NUEVA SOLICITUD -->
+
+        <button
+          type="button"
+          class="quick-item"
+          (click)="nuevaSolicitud()"
+        >
+
+          <div class="quick-icon blue">
+
+            <svg viewBox="0 0 24 24">
+
+              <path
+                d="M6 2h9l4 4v16H6z"
+              ></path>
+
+              <path
+                d="M15 2v5h5"
+              ></path>
+
+              <path
+                d="M9 12h6"
+              ></path>
+
+              <path
+                d="M9 16h4"
+              ></path>
+
+            </svg>
+
+          </div>
+
+
+          <div class="quick-copy">
+
+            <strong>
+              Nueva solicitud
+            </strong>
+
+            <span>
+              Registrar solicitud comercial
+            </span>
+
+          </div>
+
+
+          <span class="quick-arrow">
+            ›
+          </span>
+
+        </button>
+
+
+        <!-- NUEVA COTIZACIÓN -->
+
+        <button
+          type="button"
+          class="quick-item"
+          (click)="nuevaCotizacion()"
+        >
+
+          <div class="quick-icon violet">
+
+            <svg viewBox="0 0 24 24">
+
+              <rect
+                x="4"
+                y="3"
+                width="16"
+                height="18"
+                rx="2"
+              ></rect>
+
+              <path
+                d="M8 8h8"
+              ></path>
+
+              <path
+                d="M8 12h8"
+              ></path>
+
+              <path
+                d="M8 16h5"
+              ></path>
+
+            </svg>
+
+          </div>
+
+
+          <div class="quick-copy">
+
+            <strong>
+              Nueva cotización
+            </strong>
+
+            <span>
+              Crear propuesta comercial
+            </span>
+
+          </div>
+
+
+          <span class="quick-arrow">
+            ›
+          </span>
+
+        </button>
+
+
+        <!-- INVENTARIO -->
+
+        <button
+          type="button"
+          class="quick-item"
+          (click)="revisarInventario()"
+        >
+
+          <div class="quick-icon green">
+
+            <svg viewBox="0 0 24 24">
+
+              <path
+                d="M4 8h16v12H4z"
+              ></path>
+
+              <path
+                d="M2 4h20v4H2z"
+              ></path>
+
+              <path
+                d="M9 12h6"
+              ></path>
+
+            </svg>
+
+          </div>
+
+
+          <div class="quick-copy">
+
+            <strong>
+              Revisar inventario
+            </strong>
+
+            <span>
+              Consultar disponibilidad
+            </span>
+
+          </div>
+
+
+          <span class="quick-arrow">
+            ›
+          </span>
+
+        </button>
+
+      </div>
+
+
+      <!-- INFORMACIÓN -->
+
+      <div class="info-card">
+
+        <div class="info-icon">
+
+          <svg viewBox="0 0 24 24">
+
+            <path
+              d="M9 18h6"
+            ></path>
+
+            <path
+              d="M10 22h4"
+            ></path>
+
+            <path
+              d="
+                M8.5 14.5
+                A6 6 0 1 1
+                15.5 14.5
+                C14.5 15.3
+                14 16
+                14 18
+                H10
+                C10 16
+                9.5 15.3
+                8.5 14.5
+              "
+            ></path>
+
+          </svg>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            Optimiza tu gestión
+          </strong>
+
+          <p>
+            Mantén el flujo comercial organizado
+            desde un solo lugar.
+          </p>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+  </section>
+
+</main>

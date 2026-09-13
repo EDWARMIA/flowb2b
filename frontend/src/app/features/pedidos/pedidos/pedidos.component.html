@@ -1,0 +1,1623 @@
+<main class="pedidos-page">
+
+  <section class="page-header">
+
+    <div>
+
+      <span class="page-eyebrow">
+        GESTIÓN OPERATIVA
+      </span>
+
+      <h1>
+        Pedidos
+      </h1>
+
+      <p>
+        Convierte cotizaciones aceptadas en pedidos
+        y controla su preparación, despacho y entrega.
+      </p>
+
+    </div>
+
+    @if (puedeGestionar) {
+
+      <button
+        type="button"
+        class="primary-button"
+        (click)="abrirNuevoPedido()"
+      >
+
+        <span class="button-plus">
+          +
+        </span>
+
+        Nuevo pedido
+
+      </button>
+
+    }
+
+  </section>
+
+  <section class="toolbar">
+
+    <div class="search-box">
+
+      <svg viewBox="0 0 24 24">
+
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <path
+          d="m20 20-3.5-3.5"
+        ></path>
+
+      </svg>
+
+      <input
+        type="text"
+        placeholder="Buscar pedido, cliente, cotización o estado..."
+        (input)="buscar($event)"
+      >
+
+    </div>
+
+    <div class="filters">
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado === 'TODOS'
+        "
+        (click)="
+          cambiarFiltroEstado(
+            'TODOS'
+          )
+        "
+      >
+        Todos
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado === 'CREADO'
+        "
+        (click)="
+          cambiarFiltroEstado(
+            'CREADO'
+          )
+        "
+      >
+        Creados
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado ===
+          'EN_PREPARACION'
+        "
+        (click)="
+          cambiarFiltroEstado(
+            'EN_PREPARACION'
+          )
+        "
+      >
+        Preparación
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado ===
+          'DESPACHADO'
+        "
+        (click)="
+          cambiarFiltroEstado(
+            'DESPACHADO'
+          )
+        "
+      >
+        Despachados
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado ===
+          'ENTREGADO'
+        "
+        (click)="
+          cambiarFiltroEstado(
+            'ENTREGADO'
+          )
+        "
+      >
+        Entregados
+      </button>
+
+    </div>
+
+    <div class="toolbar-count">
+
+      <strong>
+        {{ pedidosFiltrados.length }}
+      </strong>
+
+      <span>
+        pedidos
+      </span>
+
+    </div>
+
+  </section>
+
+  @if (errorCarga) {
+
+    <section class="state-card error-state">
+
+      <strong>
+        No se pudieron cargar los pedidos
+      </strong>
+
+      <span>
+        {{ mensajeError }}
+      </span>
+
+      <button
+        type="button"
+        (click)="cargarDatos()"
+      >
+        Reintentar
+      </button>
+
+    </section>
+
+  } @else if (cargando) {
+
+    <section class="state-card">
+
+      <div class="loader">
+      </div>
+
+      <strong>
+        Cargando pedidos...
+      </strong>
+
+    </section>
+
+  } @else if (
+    pedidosFiltrados.length === 0
+  ) {
+
+    <section class="state-card">
+
+      <strong>
+        No hay pedidos
+      </strong>
+
+      <span>
+        Los pedidos generados aparecerán aquí.
+      </span>
+
+    </section>
+
+  } @else {
+
+    <section class="table-card">
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Cliente
+              </th>
+
+              <th>
+                Cotización
+              </th>
+
+              <th>
+                Total
+              </th>
+
+              <th>
+                Fecha pedido
+              </th>
+
+              <th>
+                Entrega estimada
+              </th>
+
+              <th>
+                Stock
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th class="actions-column">
+                Acciones
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            @for (
+              pedido of pedidosFiltrados;
+              track pedido.idPedido
+            ) {
+
+              <tr>
+
+                <td>
+
+                  <div class="client-cell">
+
+                    <div class="client-avatar">
+
+                      {{
+                        obtenerNombreCliente(
+                          pedido.clienteId
+                        )
+                          .charAt(0)
+                          .toUpperCase()
+                      }}
+
+                    </div>
+
+                    <div>
+
+                      <strong>
+
+                        {{
+                          obtenerNombreCliente(
+                            pedido.clienteId
+                          )
+                        }}
+
+                      </strong>
+
+                      <span class="pedido-code">
+                        {{ pedido.codigo }}
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <span class="quotation-code">
+
+                    {{
+                      obtenerCodigoCotizacion(
+                        pedido.cotizacionId
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <strong class="total-cell">
+
+                    {{
+                      formatearMoneda(
+                        pedido.total
+                      )
+                    }}
+
+                  </strong>
+
+                </td>
+
+                <td>
+
+                  <span class="date-cell">
+
+                    {{
+                      formatearFecha(
+                        obtenerFechaPedido(
+                          pedido
+                        )
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span class="date-cell">
+
+                    {{
+                      formatearFecha(
+                        pedido
+                          .fechaEstimadaEntrega
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  @if (
+                    tienePendientes(
+                      pedido
+                    )
+                  ) {
+
+                    <span class="stock-pending">
+
+                      {{
+                        formatearCantidad(
+                          obtenerTotalPendiente(
+                            pedido
+                          )
+                        )
+                      }}
+
+                      pendiente
+
+                    </span>
+
+                  } @else {
+
+                    <span class="stock-complete">
+                      Completo
+                    </span>
+
+                  }
+
+                </td>
+
+                <td>
+
+                  <span
+                    class="status-badge"
+                    [class.creado]="
+                      pedido.estado ===
+                      'CREADO'
+                    "
+                    [class.preparacion]="
+                      pedido.estado ===
+                      'EN_PREPARACION'
+                    "
+                    [class.despachado]="
+                      pedido.estado ===
+                      'DESPACHADO'
+                    "
+                    [class.entregado]="
+                      pedido.estado ===
+                      'ENTREGADO'
+                    "
+                    [class.cancelado]="
+                      pedido.estado ===
+                      'CANCELADO'
+                    "
+                  >
+
+                    <span class="status-dot">
+                    </span>
+
+                    {{
+                      estadoLegible(
+                        pedido.estado
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td class="actions-column">
+
+                  <div class="action-group">
+
+                    <button
+                      type="button"
+                      class="view-button"
+                      (click)="
+                        verDetalle(
+                          pedido
+                        )
+                      "
+                    >
+                      Ver
+                    </button>
+
+                    @if (
+                      puedeReintentarReserva(
+                        pedido
+                      )
+                    ) {
+
+                      <button
+                        type="button"
+                        class="reserve-button"
+                        [disabled]="
+                          reintentandoReserva
+                        "
+                        (click)="
+                          reintentarReserva(
+                            pedido
+                          )
+                        "
+                      >
+
+                        @if (
+                          reintentandoReserva
+                        ) {
+
+                          Reservando...
+
+                        } @else {
+
+                          Reintentar reserva
+
+                        }
+
+                      </button>
+
+                    }
+
+                    @if (
+                      puedeCambiarEstado(
+                        pedido
+                      )
+                    ) {
+
+                      <button
+                        type="button"
+                        class="advance-button"
+                        (click)="
+                          abrirCambioEstado(
+                            pedido,
+                            obtenerSiguienteEstado(
+                              pedido
+                            )!
+                          )
+                        "
+                      >
+
+                        {{
+                          obtenerTextoAccion(
+                            pedido
+                          )
+                        }}
+
+                      </button>
+
+                    }
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  }
+
+</main>
+
+<!-- NUEVO PEDIDO -->
+
+@if (mostrarFormulario) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarFormulario()"
+  >
+
+    <section
+      class="modal-card order-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            PEDIDO COMERCIAL
+          </span>
+
+          <h2>
+            Nuevo pedido
+          </h2>
+
+          <p>
+            Genera el pedido desde una
+            cotización aceptada por el cliente.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarFormulario()"
+          [disabled]="guardando"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <form
+        [formGroup]="formularioPedido"
+        (ngSubmit)="guardarPedido()"
+      >
+
+        <div class="form-grid">
+
+          <div class="form-group full">
+
+            <label>
+              Cotización aceptada *
+            </label>
+
+            <select
+              formControlName="cotizacionId"
+              (change)="cambiarCotizacion()"
+            >
+
+              <option value="">
+                Seleccionar cotización
+              </option>
+
+              @for (
+                cotizacion
+                of cotizacionesDisponibles;
+                track cotizacion.idCotizacion
+              ) {
+
+                <option
+                  [value]="
+                    cotizacion.idCotizacion
+                  "
+                >
+
+                  {{ cotizacion.codigo }}
+                  -
+                  {{
+                    obtenerNombreClienteCotizacion(
+                      cotizacion
+                    )
+                  }}
+                  -
+                  {{
+                    formatearMoneda(
+                      cotizacion.total
+                    )
+                  }}
+
+                </option>
+
+              }
+
+            </select>
+
+            @if (
+              cotizacionesDisponibles.length ===
+              0
+            ) {
+
+              <span class="field-note">
+
+                No hay cotizaciones aceptadas
+                disponibles para generar pedidos.
+
+              </span>
+
+            }
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Código del pedido *
+            </label>
+
+            <input
+              type="text"
+              formControlName="codigo"
+              placeholder="Ej. PED-007"
+            >
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Fecha estimada de entrega
+            </label>
+
+            <input
+              type="datetime-local"
+              formControlName="fechaEstimadaEntrega"
+            >
+
+          </div>
+
+          <div class="form-group full">
+
+            <label>
+              Observaciones
+            </label>
+
+            <textarea
+              rows="3"
+              formControlName="observaciones"
+              placeholder="Indicaciones de entrega, preparación, transporte, etc."
+            ></textarea>
+
+          </div>
+
+          @if (
+            cotizacionSeleccionada
+          ) {
+
+            <div class="quotation-summary full">
+
+              <div>
+
+                <span>
+                  Cotización
+                </span>
+
+                <strong>
+                  {{
+                    cotizacionSeleccionada
+                      .codigo
+                  }}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Cliente
+                </span>
+
+                <strong>
+
+                  {{
+                    obtenerNombreCliente(
+                      cotizacionSeleccionada
+                        .clienteId
+                    )
+                  }}
+
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Total
+                </span>
+
+                <strong class="summary-total">
+
+                  {{
+                    formatearMoneda(
+                      cotizacionSeleccionada
+                        .total
+                    )
+                  }}
+
+                </strong>
+
+              </div>
+
+            </div>
+
+            <div class="section-title full">
+
+              <strong>
+                Productos del pedido
+              </strong>
+
+              <span>
+                Se copiarán automáticamente
+                desde la cotización.
+              </span>
+
+            </div>
+
+            <div class="preview-products full">
+
+              @for (
+                detalle
+                of cotizacionSeleccionada
+                  .detalles;
+                track detalle.idDetalle
+              ) {
+
+                <div class="preview-product">
+
+                  <div>
+
+                    <strong>
+
+                      {{
+                        obtenerNombreProducto(
+                          detalle.productoId
+                        )
+                      }}
+
+                    </strong>
+
+                    <span>
+
+                      {{
+                        obtenerCodigoProducto(
+                          detalle.productoId
+                        )
+                      }}
+
+                    </span>
+
+                  </div>
+
+                  <div>
+
+                    <span>
+                      Cantidad
+                    </span>
+
+                    <strong>
+                      {{ detalle.cantidad }}
+                    </strong>
+
+                  </div>
+
+                  <div>
+
+                    <span>
+                      Precio
+                    </span>
+
+                    <strong>
+
+                      {{
+                        formatearMoneda(
+                          detalle
+                            .precioUnitario
+                        )
+                      }}
+
+                    </strong>
+
+                  </div>
+
+                  <div>
+
+                    <span>
+                      Subtotal
+                    </span>
+
+                    <strong>
+
+                      {{
+                        formatearMoneda(
+                          detalle.subtotal
+                        )
+                      }}
+
+                    </strong>
+
+                  </div>
+
+                </div>
+
+              }
+
+            </div>
+
+          }
+
+        </div>
+
+        @if (mensajeError) {
+
+          <div class="form-error">
+            {{ mensajeError }}
+          </div>
+
+        }
+
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="cerrarFormulario()"
+            [disabled]="guardando"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+            [disabled]="
+              guardando ||
+              !cotizacionSeleccionada
+            "
+          >
+
+            @if (guardando) {
+
+              Generando...
+
+            } @else {
+
+              Crear pedido
+
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+}
+
+<!-- DETALLE -->
+
+@if (
+  mostrarDetalle &&
+  pedidoSeleccionado
+) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarDetalle()"
+  >
+
+    <section
+      class="modal-card detail-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            DETALLE DEL PEDIDO
+          </span>
+
+          <h2>
+            {{ pedidoSeleccionado.codigo }}
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarDetalle()"
+          [disabled]="reintentandoReserva"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <div class="detail-content">
+
+        <div class="detail-grid">
+
+          <div>
+
+            <span>
+              Cliente
+            </span>
+
+            <strong>
+
+              {{
+                obtenerNombreCliente(
+                  pedidoSeleccionado
+                    .clienteId
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Cotización
+            </span>
+
+            <strong>
+
+              {{
+                obtenerCodigoCotizacion(
+                  pedidoSeleccionado
+                    .cotizacionId
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Estado
+            </span>
+
+            <strong>
+
+              {{
+                estadoLegible(
+                  pedidoSeleccionado.estado
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Fecha pedido
+            </span>
+
+            <strong>
+
+              {{
+                formatearFecha(
+                  obtenerFechaPedido(
+                    pedidoSeleccionado
+                  )
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Entrega estimada
+            </span>
+
+            <strong>
+
+              {{
+                formatearFecha(
+                  pedidoSeleccionado
+                    .fechaEstimadaEntrega
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Fecha entrega
+            </span>
+
+            <strong>
+
+              {{
+                formatearFecha(
+                  pedidoSeleccionado
+                    .fechaEntrega
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+        </div>
+
+        @if (
+          pedidoSeleccionado.observaciones
+        ) {
+
+          <div class="information-box">
+
+            <span>
+              Observaciones
+            </span>
+
+            <p>
+              {{
+                pedidoSeleccionado
+                  .observaciones
+              }}
+            </p>
+
+          </div>
+
+        }
+
+        @if (
+          tienePendientes(
+            pedidoSeleccionado
+          )
+        ) {
+
+          <div class="stock-alert">
+
+            <div>
+
+              <strong>
+                Stock pendiente
+              </strong>
+
+              <span>
+
+                Faltan
+
+                {{
+                  formatearCantidad(
+                    obtenerTotalPendiente(
+                      pedidoSeleccionado
+                    )
+                  )
+                }}
+
+                unidades por reservar.
+
+              </span>
+
+            </div>
+
+            @if (
+              puedeReintentarReserva(
+                pedidoSeleccionado
+              )
+            ) {
+
+              <button
+                type="button"
+                class="reserve-button"
+                [disabled]="
+                  reintentandoReserva
+                "
+                (click)="
+                  reintentarReserva(
+                    pedidoSeleccionado
+                  )
+                "
+              >
+
+                @if (
+                  reintentandoReserva
+                ) {
+
+                  Reservando...
+
+                } @else {
+
+                  Reintentar reserva
+
+                }
+
+              </button>
+
+            }
+
+          </div>
+
+        } @else {
+
+          <div class="stock-ready">
+
+            <strong>
+              Stock completamente reservado
+            </strong>
+
+            <span>
+              El pedido está listo para continuar
+              con el flujo operativo.
+            </span>
+
+          </div>
+
+        }
+
+        @if (mensajeError) {
+
+          <div class="form-error">
+            {{ mensajeError }}
+          </div>
+
+        }
+
+        <div class="detail-products">
+
+          <h3>
+            Productos e inventario
+          </h3>
+
+          @for (
+            detalle
+            of pedidoSeleccionado.detalles;
+            track detalle.idDetalle
+          ) {
+
+            <div class="detail-product-row">
+
+              <div class="product-main">
+
+                <strong>
+
+                  {{
+                    obtenerNombreProducto(
+                      detalle.productoId
+                    )
+                  }}
+
+                </strong>
+
+                <span>
+
+                  {{
+                    obtenerCodigoProducto(
+                      detalle.productoId
+                    )
+                  }}
+
+                </span>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Solicitado
+                </span>
+
+                <strong>
+                  {{
+                    formatearCantidad(
+                      detalle.cantidad
+                    )
+                  }}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Reservado
+                </span>
+
+                <strong class="reserved-value">
+
+                  {{
+                    formatearCantidad(
+                      detalle
+                        .cantidadReservada
+                    )
+                  }}
+
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Pendiente
+                </span>
+
+                <strong
+                  [class.pending-value]="
+                    detalle
+                      .cantidadPendiente > 0
+                  "
+                >
+
+                  {{
+                    formatearCantidad(
+                      detalle
+                        .cantidadPendiente
+                    )
+                  }}
+
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Subtotal
+                </span>
+
+                <strong>
+
+                  {{
+                    formatearMoneda(
+                      detalle.subtotal
+                    )
+                  }}
+
+                </strong>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+        <div class="detail-summary">
+
+          <div>
+
+            <span>
+              Subtotal
+            </span>
+
+            <strong>
+
+              {{
+                formatearMoneda(
+                  pedidoSeleccionado
+                    .subtotal
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Descuento
+            </span>
+
+            <strong>
+
+              -
+              {{
+                formatearMoneda(
+                  pedidoSeleccionado
+                    .descuento
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Impuesto
+            </span>
+
+            <strong>
+
+              {{
+                formatearMoneda(
+                  pedidoSeleccionado
+                    .impuesto
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div class="final-total">
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+
+              {{
+                formatearMoneda(
+                  pedidoSeleccionado
+                    .total
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+        </div>
+
+        @if (
+          puedeCambiarEstado(
+            pedidoSeleccionado
+          )
+        ) {
+
+          <div class="order-actions">
+
+            @if (
+              pedidoSeleccionado.estado ===
+              'CREADO' ||
+              pedidoSeleccionado.estado ===
+              'EN_PREPARACION'
+            ) {
+
+              <button
+                type="button"
+                class="cancel-button"
+                (click)="
+                  abrirCambioEstado(
+                    pedidoSeleccionado,
+                    'CANCELADO'
+                  )
+                "
+              >
+                Cancelar pedido
+              </button>
+
+            }
+
+            @if (
+              obtenerSiguienteEstado(
+                pedidoSeleccionado
+              )
+            ) {
+
+              <button
+                type="button"
+                class="advance-main-button"
+                (click)="
+                  abrirCambioEstado(
+                    pedidoSeleccionado,
+                    obtenerSiguienteEstado(
+                      pedidoSeleccionado
+                    )!
+                  )
+                "
+              >
+
+                {{
+                  obtenerTextoAccion(
+                    pedidoSeleccionado
+                  )
+                }}
+
+              </button>
+
+            }
+
+          </div>
+
+        }
+
+      </div>
+
+    </section>
+
+  </div>
+
+}
+
+<!-- CAMBIO DE ESTADO -->
+
+@if (
+  mostrarCambioEstado &&
+  pedidoSeleccionado
+) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarCambioEstado()"
+  >
+
+    <section
+      class="modal-card state-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            ACTUALIZAR PEDIDO
+          </span>
+
+          <h2>
+            {{ pedidoSeleccionado.codigo }}
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          [disabled]="procesandoEstado"
+          (click)="cerrarCambioEstado()"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <form
+        [formGroup]="formularioEstado"
+        (ngSubmit)="confirmarCambioEstado()"
+      >
+
+        <div class="current-state">
+
+          <span>
+            Estado actual
+          </span>
+
+          <strong>
+
+            {{
+              estadoLegible(
+                pedidoSeleccionado.estado
+              )
+            }}
+
+          </strong>
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            Nuevo estado *
+          </label>
+
+          <select
+            formControlName="estado"
+          >
+
+            <option value="">
+              Seleccionar estado
+            </option>
+
+            @for (
+              estado
+              of obtenerEstadosPermitidos(
+                pedidoSeleccionado
+              );
+              track estado
+            ) {
+
+              <option
+                [value]="estado"
+              >
+
+                {{
+                  estadoLegible(
+                    estado
+                  )
+                }}
+
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            Comentario
+          </label>
+
+          <textarea
+            rows="4"
+            formControlName="comentario"
+            placeholder="Agrega un comentario sobre este cambio..."
+          ></textarea>
+
+        </div>
+
+        @if (mensajeError) {
+
+          <div class="form-error">
+            {{ mensajeError }}
+          </div>
+
+        }
+
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="secondary-button"
+            [disabled]="procesandoEstado"
+            (click)="cerrarCambioEstado()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+            [disabled]="procesandoEstado"
+          >
+
+            @if (
+              procesandoEstado
+            ) {
+
+              Procesando...
+
+            } @else {
+
+              Confirmar cambio
+
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+}

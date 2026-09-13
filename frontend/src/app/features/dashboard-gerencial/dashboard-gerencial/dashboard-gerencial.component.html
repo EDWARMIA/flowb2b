@@ -1,0 +1,797 @@
+<main class="gerencial-content">
+
+  <!-- ================================================= -->
+  <!-- HEADER -->
+  <!-- ================================================= -->
+
+  <section class="gerencial-header">
+
+    <div>
+
+      <span class="eyebrow">
+        ANALÍTICA GERENCIAL
+      </span>
+
+      <h1>
+        Dashboard gerencial
+      </h1>
+
+      <p>
+        Indicadores comerciales y operativos
+        de la empresa.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      class="refresh-button"
+      (click)="cargarAnalitica()"
+      [disabled]="cargando"
+    >
+
+      <svg viewBox="0 0 24 24">
+
+        <path
+          d="M20 11a8 8 0 0 0-15-3"
+        ></path>
+
+        <path
+          d="M4 4v5h5"
+        ></path>
+
+        <path
+          d="M4 13a8 8 0 0 0 15 3"
+        ></path>
+
+        <path
+          d="M20 20v-5h-5"
+        ></path>
+
+      </svg>
+
+      Actualizar
+
+    </button>
+
+  </section>
+
+
+  <!-- ================================================= -->
+  <!-- FILTROS -->
+  <!-- ================================================= -->
+
+  <section class="filters-panel">
+
+    <div class="filters-heading">
+
+      <div>
+
+        <span class="section-eyebrow">
+          FILTROS
+        </span>
+
+        <strong>
+          Analizar información
+        </strong>
+
+      </div>
+
+      <span class="filter-status">
+
+        @if (
+          cargando
+        ) {
+
+          Actualizando...
+
+        } @else {
+
+          Datos actualizados
+
+        }
+
+      </span>
+
+    </div>
+
+
+    <div class="filters-grid">
+
+      <div class="filter-field">
+
+        <label>
+          Desde
+        </label>
+
+        <input
+          type="date"
+          [(ngModel)]="filtroDesde"
+        >
+
+      </div>
+
+
+      <div class="filter-field">
+
+        <label>
+          Hasta
+        </label>
+
+        <input
+          type="date"
+          [(ngModel)]="filtroHasta"
+        >
+
+      </div>
+
+
+      <div class="filter-field">
+
+        <label>
+          Cliente
+        </label>
+
+        <select
+          [(ngModel)]="filtroClienteId"
+        >
+
+          <option
+            [ngValue]="null"
+          >
+            Todos los clientes
+          </option>
+
+          @for (
+            cliente of clientes;
+            track cliente.idCliente
+          ) {
+
+            <option
+              [ngValue]="cliente.idCliente"
+            >
+              {{
+                obtenerNombreCliente(
+                  cliente
+                )
+              }}
+            </option>
+
+          }
+
+        </select>
+
+      </div>
+
+
+      <div class="filter-field">
+
+        <label>
+          Producto
+        </label>
+
+        <select
+          [(ngModel)]="filtroProductoId"
+        >
+
+          <option
+            [ngValue]="null"
+          >
+            Todos los productos
+          </option>
+
+          @for (
+            producto of productos;
+            track producto.idProducto
+          ) {
+
+            <option
+              [ngValue]="producto.idProducto"
+            >
+              {{ producto.nombre }}
+            </option>
+
+          }
+
+        </select>
+
+      </div>
+
+
+      <div class="filter-field">
+
+        <label>
+          Vendedor
+        </label>
+
+        <select
+          [(ngModel)]="filtroVendedorId"
+        >
+
+          <option
+            [ngValue]="null"
+          >
+            Todos los vendedores
+          </option>
+
+          @for (
+            vendedor of vendedores;
+            track vendedor.id
+          ) {
+
+            <option
+              [ngValue]="vendedor.id"
+            >
+              {{ vendedor.nombre }}
+            </option>
+
+          }
+
+        </select>
+
+      </div>
+
+
+      <div class="filter-actions">
+
+        <button
+          type="button"
+          class="button-secondary"
+          (click)="limpiarFiltros()"
+          [disabled]="cargando"
+        >
+          Limpiar
+        </button>
+
+        <button
+          type="button"
+          class="button-primary"
+          (click)="aplicarFiltros()"
+          [disabled]="cargando"
+        >
+          Aplicar
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================================================= -->
+  <!-- ERROR -->
+  <!-- ================================================= -->
+
+  @if (
+    error
+  ) {
+
+    <div class="error-message">
+      {{ error }}
+    </div>
+
+  }
+
+
+  <!-- ================================================= -->
+  <!-- LOADING -->
+  <!-- ================================================= -->
+
+  @if (
+    cargando &&
+    !analitica
+  ) {
+
+    <section class="loading-panel">
+
+      <div class="loader">
+      </div>
+
+      <strong>
+        Cargando analítica...
+      </strong>
+
+    </section>
+
+  }
+
+
+  <!-- ================================================= -->
+  <!-- CONTENIDO -->
+  <!-- ================================================= -->
+
+  @if (
+    analitica
+  ) {
+
+    <!-- KPI -->
+
+    <section class="kpi-grid">
+
+      <article class="kpi-card">
+
+        <span class="kpi-label">
+          VENTAS
+        </span>
+
+        <strong>
+          {{
+            formatearMoneda(
+              analitica
+                .resumen
+                .ventasTotales
+            )
+          }}
+        </strong>
+
+        <small>
+          Ventas acumuladas
+        </small>
+
+      </article>
+
+
+      <article class="kpi-card">
+
+        <span class="kpi-label">
+          PEDIDOS
+        </span>
+
+        <strong>
+          {{
+            formatearNumero(
+              analitica
+                .resumen
+                .totalPedidos
+            )
+          }}
+        </strong>
+
+        <small>
+          Pedidos válidos
+        </small>
+
+      </article>
+
+
+      <article class="kpi-card">
+
+        <span class="kpi-label">
+          TICKET PROMEDIO
+        </span>
+
+        <strong>
+          {{
+            formatearMoneda(
+              analitica
+                .resumen
+                .ticketPromedio
+            )
+          }}
+        </strong>
+
+        <small>
+          Por pedido
+        </small>
+
+      </article>
+
+
+      <article class="kpi-card">
+
+        <span class="kpi-label">
+          CONVERSIÓN
+        </span>
+
+        <strong>
+          {{
+            formatearPorcentaje(
+              analitica
+                .resumen
+                .tasaConversion
+            )
+          }}
+        </strong>
+
+        <small>
+          {{
+            analitica
+              .resumen
+              .totalPedidos
+          }}
+          de
+          {{
+            analitica
+              .resumen
+              .totalCotizaciones
+          }}
+          cotizaciones
+        </small>
+
+      </article>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- MATRIZ 2 X 2 -->
+    <!-- ================================================= -->
+
+    <section class="analytics-grid">
+
+
+      <!-- =============================================== -->
+      <!-- VENTAS -->
+      <!-- =============================================== -->
+
+      <article class="analytics-card">
+
+        <header class="card-header">
+
+          <div>
+
+            <span class="section-eyebrow">
+              COMERCIAL
+            </span>
+
+            <h2>
+              Ventas
+            </h2>
+
+          </div>
+
+          <strong class="header-number">
+            {{
+              formatearMoneda(
+                analitica
+                  .resumen
+                  .ventasTotales
+              )
+            }}
+          </strong>
+
+        </header>
+
+
+        <div class="mini-chart">
+
+          @for (
+            item of
+              analitica.ventasMensuales;
+            track item.periodo
+          ) {
+
+            <div class="mini-column">
+
+              <div class="mini-value">
+
+                @if (
+                  item.ventas > 0
+                ) {
+
+                  {{
+                    formatearMoneda(
+                      item.ventas
+                    )
+                  }}
+
+                }
+
+              </div>
+
+              <div class="mini-bar-area">
+
+                <div
+                  class="mini-bar sales"
+                  [style.height.%]="
+                    obtenerAlturaVenta(
+                      item
+                    )
+                  "
+                  [class.zero]="
+                    item.ventas === 0
+                  "
+                >
+                </div>
+
+              </div>
+
+              <span class="mini-month">
+                {{ item.mes }}
+              </span>
+
+            </div>
+
+          }
+
+        </div>
+
+      </article>
+
+
+      <!-- =============================================== -->
+      <!-- PEDIDOS -->
+      <!-- =============================================== -->
+
+      <article class="analytics-card">
+
+        <header class="card-header">
+
+          <div>
+
+            <span class="section-eyebrow green">
+              OPERACIÓN
+            </span>
+
+            <h2>
+              Pedidos
+            </h2>
+
+          </div>
+
+          <strong class="header-number">
+            {{
+              analitica
+                .resumen
+                .totalPedidos
+            }}
+          </strong>
+
+        </header>
+
+
+        <div class="mini-chart">
+
+          @for (
+            item of
+              analitica.pedidosMensuales;
+            track item.periodo
+          ) {
+
+            <div class="mini-column">
+
+              <div class="mini-value">
+
+                @if (
+                  item.pedidos > 0
+                ) {
+
+                  {{ item.pedidos }}
+
+                }
+
+              </div>
+
+              <div class="mini-bar-area">
+
+                <div
+                  class="mini-bar orders"
+                  [style.height.%]="
+                    obtenerAlturaPedido(
+                      item
+                    )
+                  "
+                  [class.zero]="
+                    item.pedidos === 0
+                  "
+                >
+                </div>
+
+              </div>
+
+              <span class="mini-month">
+                {{ item.mes }}
+              </span>
+
+            </div>
+
+          }
+
+        </div>
+
+      </article>
+
+
+      <!-- =============================================== -->
+      <!-- PRODUCTOS -->
+      <!-- =============================================== -->
+
+      <article class="analytics-card">
+
+        <header class="card-header">
+
+          <div>
+
+            <span class="section-eyebrow orange">
+              PRODUCTOS
+            </span>
+
+            <h2>
+              Top productos
+            </h2>
+
+          </div>
+
+          <span class="header-note">
+            Por unidades
+          </span>
+
+        </header>
+
+
+        @if (
+          analitica
+            .topProductos
+            .length === 0
+        ) {
+
+          <div class="empty-chart">
+            Sin productos para mostrar.
+          </div>
+
+        } @else {
+
+          <div class="horizontal-chart">
+
+            @for (
+              producto of
+                analitica.topProductos;
+              track producto.productoId
+            ) {
+
+              <div class="horizontal-row">
+
+                <div class="row-heading">
+
+                  <strong>
+                    {{ producto.producto }}
+                  </strong>
+
+                  <span>
+                    {{
+                      formatearNumero(
+                        producto
+                          .cantidadVendida
+                      )
+                    }}
+                    uds.
+                  </span>
+
+                </div>
+
+
+                <div class="horizontal-track">
+
+                  <div
+                    class="horizontal-fill product"
+                    [style.width.%]="
+                      obtenerAnchoProducto(
+                        producto
+                      )
+                    "
+                  >
+                  </div>
+
+                </div>
+
+
+                <small>
+                  {{
+                    formatearMoneda(
+                      producto.ventas
+                    )
+                  }}
+                </small>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+      </article>
+
+
+      <!-- =============================================== -->
+      <!-- COTIZACIONES -->
+      <!-- =============================================== -->
+
+      <article class="analytics-card">
+
+        <header class="card-header">
+
+          <div>
+
+            <span class="section-eyebrow purple">
+              PIPELINE
+            </span>
+
+            <h2>
+              Cotizaciones
+            </h2>
+
+          </div>
+
+          <strong class="header-number">
+            {{
+              analitica
+                .resumen
+                .totalCotizaciones
+            }}
+          </strong>
+
+        </header>
+
+
+        @if (
+          analitica
+            .cotizacionesPorEstado
+            .length === 0
+        ) {
+
+          <div class="empty-chart">
+            Sin cotizaciones para mostrar.
+          </div>
+
+        } @else {
+
+          <div class="horizontal-chart">
+
+            @for (
+              estado of
+                analitica
+                  .cotizacionesPorEstado;
+              track estado.estado
+            ) {
+
+              <div class="horizontal-row">
+
+                <div class="row-heading">
+
+                  <strong>
+                    {{
+                      obtenerEstadoLegible(
+                        estado.estado
+                      )
+                    }}
+                  </strong>
+
+                  <span>
+                    {{ estado.cantidad }}
+                  </span>
+
+                </div>
+
+
+                <div class="horizontal-track">
+
+                  <div
+                    class="horizontal-fill quote"
+                    [style.width.%]="
+                      obtenerAnchoCotizacion(
+                        estado
+                      )
+                    "
+                  >
+                  </div>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+      </article>
+
+    </section>
+
+  }
+
+</main>

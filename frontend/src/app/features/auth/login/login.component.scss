@@ -1,0 +1,1329 @@
+:host {
+  display: block;
+
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.login-page {
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    62% 38%;
+
+  overflow: hidden;
+
+  font-family:
+    Inter,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+/* =========================================================
+   PANEL IZQUIERDO
+   ========================================================= */
+
+.info-panel {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  color: #ffffff;
+
+  background:
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(27, 103, 213, 0.19),
+      transparent 29%
+    ),
+    linear-gradient(
+      135deg,
+      #03101f 0%,
+      #061a32 58%,
+      #092d59 100%
+    );
+}
+
+.info-panel::after {
+  content: "";
+
+  position: absolute;
+
+  width: 700px;
+  height: 700px;
+
+  right: -430px;
+  bottom: -480px;
+
+  border:
+    1px solid
+    rgba(59, 130, 246, 0.20);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.info-wrapper {
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+  height: 100%;
+
+  padding:
+    25px
+    clamp(46px, 5vw, 74px)
+    22px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   MARCA
+   ========================================================= */
+
+.brand {
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.brand-logo {
+  width: 53px;
+  height: 53px;
+
+  flex: 0 0 53px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      145deg,
+      #3281ff,
+      #0967ee
+    );
+
+  box-shadow:
+    0 10px 28px
+    rgba(15, 103, 238, 0.27);
+
+  font-size: 25px;
+  font-weight: 800;
+
+  user-select: none;
+}
+
+.brand-name {
+  color: #ffffff;
+
+  font-size: 29px;
+  font-weight: 800;
+
+  letter-spacing: -1px;
+
+  span {
+    color: #3b82f6;
+  }
+}
+
+.brand-subtitle {
+  margin-top: 5px;
+
+  color: #9bb0ca;
+
+  font-size: 10px;
+  font-weight: 650;
+
+  letter-spacing: 1.6px;
+}
+
+/* =========================================================
+   CUERPO
+   ========================================================= */
+
+.info-body {
+  flex: 1;
+
+  min-height: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(335px, 0.88fr)
+    minmax(385px, 1.12fr);
+
+  gap:
+    clamp(28px, 3.7vw, 52px);
+
+  align-items: center;
+}
+
+/* =========================================================
+   COPY
+   ========================================================= */
+
+.info-copy {
+  width: 100%;
+
+  max-width: 500px;
+}
+
+.section-label {
+  display: inline-block;
+
+  margin-bottom: 12px;
+
+  color: #66aaff;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 2px;
+}
+
+.info-copy h1 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size:
+    clamp(46px, 4vw, 62px);
+
+  line-height: 0.99;
+
+  font-weight: 780;
+
+  letter-spacing: -2.6px;
+
+  span {
+    color: #2880ff;
+  }
+}
+
+.main-description {
+  max-width: 470px;
+
+  margin:
+    16px 0
+    0;
+
+  color: #bac9da;
+
+  font-size: 14px;
+
+  line-height: 1.57;
+}
+
+/* =========================================================
+   FEATURES
+   ========================================================= */
+
+.features {
+  margin-top: 20px;
+
+  display: grid;
+
+  gap: 12px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.feature-icon {
+  width: 46px;
+  height: 46px;
+
+  flex: 0 0 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    rgba(38, 132, 255, 0.65);
+
+  border-radius: 10px;
+
+  color: #7bb4ff;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 49, 92, 0.90),
+      rgba(7, 35, 67, 0.75)
+    );
+
+  svg {
+    width: 22px;
+    height: 22px;
+
+    fill: none;
+
+    stroke: currentColor;
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.feature-copy strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 680;
+}
+
+.feature-copy p {
+  max-width: 340px;
+
+  margin: 0;
+
+  color: #a8b9cd;
+
+  font-size: 12px;
+
+  line-height: 1.45;
+}
+
+/* =========================================================
+   ANALYTICS
+   ========================================================= */
+
+.analytics-panel {
+  width: 100%;
+
+  display: grid;
+
+  gap: 11px;
+
+  user-select: none;
+  -webkit-user-select: none;
+
+  pointer-events: none;
+}
+
+.analytics-panel *,
+.analytics-panel svg {
+  user-select: none;
+  -webkit-user-select: none;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   GRÁFICO PRINCIPAL
+   ========================================================= */
+
+.sales-card {
+  width: 100%;
+
+  padding:
+    15px
+    18px
+    13px;
+
+  border:
+    1px solid
+    rgba(56, 139, 255, 0.28);
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8, 39, 75, 0.96),
+      rgba(5, 29, 58, 0.94)
+    );
+
+  box-shadow:
+    0 18px 45px
+    rgba(0, 0, 0, 0.14);
+}
+
+.card-heading {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 7px;
+
+  > div:first-child {
+
+    > span {
+      display: block;
+
+      margin-bottom: 4px;
+
+      color: #72adff;
+
+      font-size: 7px;
+      font-weight: 700;
+
+      letter-spacing: 1.3px;
+    }
+
+    > strong {
+      display: block;
+
+      color: #f5f9ff;
+
+      font-size: 14px;
+      font-weight: 670;
+    }
+  }
+}
+
+.card-indicator {
+  text-align: right;
+
+  strong {
+    display: block;
+
+    color: #3de6a0;
+
+    font-size: 17px;
+
+    line-height: 1;
+  }
+
+  span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #869bb5;
+
+    font-size: 6px;
+  }
+}
+
+.sales-chart {
+  position: relative;
+
+  width: 100%;
+  height: 105px;
+}
+
+.chart-grid {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: space-between;
+
+  span {
+    width: 100%;
+    height: 1px;
+
+    background:
+      rgba(134, 160, 190, 0.11);
+  }
+}
+
+.sales-chart svg {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+.chart-line {
+  fill: none;
+
+  stroke: #3f8cff;
+
+  stroke-width: 3;
+
+  vector-effect:
+    non-scaling-stroke;
+}
+
+.chart-area-fill {
+  fill: url(#salesArea);
+}
+
+.month-labels {
+  display: flex;
+
+  justify-content: space-between;
+
+  padding-top: 5px;
+
+  color: #879bb4;
+
+  font-size: 7px;
+}
+
+/* =========================================================
+   MÉTRICAS
+   ========================================================= */
+
+.metrics-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 10px;
+}
+
+.metric-card {
+  min-height: 126px;
+
+  padding:
+    13px
+    12px;
+
+  border:
+    1px solid
+    rgba(57, 140, 255, 0.23);
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(7, 36, 70, 0.96),
+      rgba(6, 29, 57, 0.95)
+    );
+
+  box-shadow:
+    0 15px 35px
+    rgba(0, 0, 0, 0.12);
+}
+
+.metric-icon {
+  width: 31px;
+  height: 31px;
+
+  margin-bottom: 10px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+
+  svg {
+    width: 18px;
+    height: 18px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.metric-icon.blue {
+  color: #54a0ff;
+
+  background:
+    rgba(37, 99, 235, 0.18);
+}
+
+.metric-icon.green {
+  color: #37d58f;
+
+  background:
+    rgba(34, 197, 94, 0.13);
+}
+
+.metric-icon.orange {
+  color: #f7a51b;
+
+  background:
+    rgba(245, 158, 11, 0.13);
+}
+
+.metric-label {
+  display: block;
+
+  color: #f3f7fc;
+
+  font-size: 10px;
+
+  font-weight: 650;
+}
+
+.metric-value {
+  display: block;
+
+  margin:
+    4px 0
+    1px;
+
+  color: #ffffff;
+
+  font-size: 23px;
+
+  line-height: 1;
+}
+
+.metric-card small {
+  color: #8398b2;
+
+  font-size: 7px;
+}
+
+/* =========================================================
+   TARJETA HORIZONTAL
+   ========================================================= */
+
+.operation-card {
+  min-height: 62px;
+
+  padding:
+    10px
+    13px;
+
+  display: grid;
+
+  grid-template-columns:
+    40px
+    1fr
+    22px;
+
+  align-items: center;
+
+  gap: 12px;
+
+  border:
+    1px solid
+    rgba(57, 140, 255, 0.22);
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(7, 36, 70, 0.96),
+      rgba(7, 30, 59, 0.96)
+    );
+}
+
+.operation-icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  color: #a68aff;
+
+  background:
+    linear-gradient(
+      145deg,
+      #39258f,
+      #261760
+    );
+
+  svg {
+    width: 22px;
+    height: 22px;
+
+    fill: currentColor;
+
+    stroke: none;
+  }
+}
+
+.operation-copy strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #ffffff;
+
+  font-size: 10px;
+}
+
+.operation-copy span {
+  display: block;
+
+  color: #8fa3bb;
+
+  font-size: 7px;
+
+  line-height: 1.4;
+}
+
+.operation-arrow {
+  color: #75aef8;
+
+  font-size: 20px;
+}
+
+/* =========================================================
+   MENSAJE INFERIOR
+   ========================================================= */
+
+.business-message {
+  margin-top: 2px;
+
+  padding-top: 7px;
+
+  span {
+    display: block;
+
+    width: 32px;
+    height: 2px;
+
+    margin-bottom: 6px;
+
+    background: #3b82f6;
+  }
+
+  p {
+    margin: 0;
+
+    color: #8296ad;
+
+    font-size: 8px;
+    font-weight: 650;
+
+    letter-spacing: 1.5px;
+
+    line-height: 1.6;
+  }
+}
+
+/* =========================================================
+   PANEL DERECHO
+   ========================================================= */
+
+.login-panel {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    38px
+    clamp(44px, 5vw, 76px);
+
+  overflow: hidden;
+
+  background: #ffffff;
+}
+
+.login-wrapper {
+  width: 100%;
+
+  max-width: 410px;
+}
+
+.mobile-brand {
+  display: none;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.login-header {
+  margin-bottom: 32px;
+}
+
+.login-eyebrow {
+  display: block;
+
+  margin-bottom: 15px;
+
+  color: #1263f5;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  letter-spacing: 1.6px;
+}
+
+.login-header h2 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size:
+    clamp(32px, 2.7vw, 39px);
+
+  line-height: 1.08;
+
+  font-weight: 780;
+
+  letter-spacing: -1.4px;
+}
+
+.login-header p {
+  margin:
+    12px 0
+    0;
+
+  color: #8190a4;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   FORMULARIO
+   ========================================================= */
+
+.login-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #172033;
+
+    font-size: 13px;
+    font-weight: 680;
+  }
+}
+
+.field-container {
+  width: 100%;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    #ccd7e5;
+
+  border-radius: 6px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.17s,
+    box-shadow 0.17s;
+
+  &:focus-within {
+    border-color: #2563eb;
+
+    box-shadow:
+      0 0 0 3px
+      rgba(37, 99, 235, 0.07);
+  }
+
+  &.invalid {
+    border-color: #dc2626;
+  }
+
+  input {
+    flex: 1;
+
+    min-width: 0;
+
+    height: 100%;
+
+    padding:
+      0
+      10px
+      0
+      0;
+
+    border: 0;
+
+    outline: none;
+
+    color: #111827;
+
+    background: transparent;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    &::placeholder {
+      color: #9aa8ba;
+    }
+  }
+}
+
+.field-icon {
+  width: 48px;
+  height: 100%;
+
+  flex: 0 0 48px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: #6f8097;
+
+  svg {
+    width: 20px;
+    height: 20px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.eye-button {
+  width: 48px;
+  height: 100%;
+
+  flex: 0 0 48px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+
+  cursor: pointer;
+
+  color: #718096;
+
+  background: transparent;
+
+  svg {
+    width: 20px;
+    height: 20px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    color: #2563eb;
+
+    background: #f8fafc;
+  }
+}
+
+.field-error {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #dc2626;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.server-error {
+  margin:
+    -3px 0
+    14px;
+
+  padding:
+    10px
+    12px;
+
+  border:
+    1px solid
+    #fecaca;
+
+  border-radius: 6px;
+
+  color: #b91c1c;
+
+  background: #fff7f7;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+.login-button {
+  position: relative;
+
+  width: 100%;
+  height: 53px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      100deg,
+      #1970f7,
+      #0964ef
+    );
+
+  box-shadow:
+    0 10px 24px
+    rgba(37, 99, 235, 0.16);
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 680;
+
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s,
+    background 0.15s;
+
+  &:hover:not(:disabled) {
+    transform:
+      translateY(-1px);
+
+    box-shadow:
+      0 13px 26px
+      rgba(37, 99, 235, 0.22);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+
+    cursor: not-allowed;
+  }
+}
+
+.login-arrow {
+  position: absolute;
+
+  right: 20px;
+
+  font-size: 22px;
+}
+
+.login-loading {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+
+  border:
+    2px solid
+    rgba(255, 255, 255, 0.35);
+
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation:
+    spinner 0.7s linear infinite;
+}
+
+@keyframes spinner {
+
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+/* =========================================================
+   OLVIDÉ MI CONTRASEÑA
+   ========================================================= */
+
+.forgot-password-button {
+  width: 100%;
+  height: 58px;
+
+  margin-top: 16px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 11px;
+
+  border:
+    1px solid
+    #edf0f4;
+
+  border-radius: 7px;
+
+  cursor: pointer;
+
+  color: #1664e8;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f7faff,
+      #f1f5fa
+    );
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 650;
+
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.15s;
+
+  &:hover {
+    border-color: #d8e5f7;
+
+    background: #edf5ff;
+
+    transform:
+      translateY(-1px);
+  }
+}
+
+.forgot-icon {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: #2563eb;
+
+  svg {
+    width: 20px;
+    height: 20px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+/* =========================================================
+   FOOTER LOGIN
+   ========================================================= */
+
+.login-footer {
+  margin-top: 39px;
+
+  padding-top: 16px;
+
+  border-top:
+    1px solid
+    #e8edf3;
+
+  strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #3b4859;
+
+    font-size: 12px;
+  }
+
+  span {
+    color: #9aa6b5;
+
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE INTERMEDIO
+   ========================================================= */
+
+@media (max-width: 1180px) {
+
+  .login-page {
+    grid-template-columns:
+      56% 44%;
+  }
+
+  .analytics-panel {
+    display: none;
+  }
+
+  .info-body {
+    display: flex;
+
+    align-items: center;
+  }
+
+  .info-copy {
+    max-width: 590px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+  :host {
+    height: auto;
+
+    min-height: 100dvh;
+
+    overflow: visible;
+  }
+
+  .login-page {
+    display: block;
+
+    height: auto;
+
+    min-height: 100dvh;
+
+    overflow: visible;
+  }
+
+  .info-panel {
+    display: none;
+  }
+
+  .login-panel {
+    min-height: 100dvh;
+
+    padding:
+      30px
+      22px;
+
+    align-items: flex-start;
+
+    overflow: visible;
+  }
+
+  .login-wrapper {
+    width: 100%;
+
+    max-width: 430px;
+
+    margin: 0 auto;
+  }
+
+  .mobile-brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    margin-bottom: 50px;
+  }
+
+  .mobile-brand .brand-logo {
+    width: 45px;
+    height: 45px;
+
+    flex-basis: 45px;
+
+    font-size: 22px;
+  }
+
+  .mobile-brand-name {
+    color: #111827;
+
+    font-size: 25px;
+  }
+
+  .login-header h2 {
+    font-size: 32px;
+  }
+}

@@ -1,0 +1,683 @@
+<main class="productos-page">
+
+  <section class="page-header">
+
+    <div>
+
+      <span class="page-eyebrow">
+        CATÁLOGO COMERCIAL
+      </span>
+
+      <h1>
+        Productos
+      </h1>
+
+      <p>
+        Administra los productos utilizados
+        en solicitudes, cotizaciones,
+        pedidos e inventario.
+      </p>
+
+    </div>
+
+    @if (puedeCrear) {
+
+      <button
+        type="button"
+        class="primary-button"
+        (click)="abrirNuevoProducto()"
+      >
+
+        <span class="button-plus">
+          +
+        </span>
+
+        Nuevo producto
+
+      </button>
+
+    }
+
+  </section>
+
+  <section class="summary-grid">
+
+    <article class="summary-card">
+
+      <span>
+        Total productos
+      </span>
+
+      <strong>
+        {{ productos.length }}
+      </strong>
+
+    </article>
+
+    <article class="summary-card">
+
+      <span>
+        Productos activos
+      </span>
+
+      <strong>
+        {{ obtenerCantidadActivos() }}
+      </strong>
+
+    </article>
+
+  </section>
+
+  <section class="toolbar">
+
+    <div class="search-box">
+
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <path
+          d="m20 20-3.5-3.5"
+        ></path>
+
+      </svg>
+
+      <input
+        type="text"
+        placeholder="Buscar por código, producto o categoría..."
+        (input)="buscar($event)"
+      >
+
+    </div>
+
+    <div class="filters">
+
+      <button
+        type="button"
+        [class.active]="filtroEstado === 'TODOS'"
+        (click)="cambiarFiltroEstado('TODOS')"
+      >
+        Todos
+      </button>
+
+      <button
+        type="button"
+        [class.active]="filtroEstado === 'ACTIVOS'"
+        (click)="cambiarFiltroEstado('ACTIVOS')"
+      >
+        Activos
+      </button>
+
+      <button
+        type="button"
+        [class.active]="filtroEstado === 'INACTIVOS'"
+        (click)="cambiarFiltroEstado('INACTIVOS')"
+      >
+        Inactivos
+      </button>
+
+    </div>
+
+    <div class="toolbar-count">
+
+      <strong>
+        {{ productosFiltrados.length }}
+      </strong>
+
+      <span>
+        resultados
+      </span>
+
+    </div>
+
+  </section>
+
+  @if (errorCarga) {
+
+    <section class="state-card error-state">
+
+      <strong>
+        No se pudieron cargar los productos
+      </strong>
+
+      <span>
+        {{ mensajeError }}
+      </span>
+
+      <button
+        type="button"
+        (click)="cargarDatos()"
+      >
+        Reintentar
+      </button>
+
+    </section>
+
+  } @else if (cargando) {
+
+    <section class="state-card">
+
+      <div class="loader"></div>
+
+      <strong>
+        Cargando productos...
+      </strong>
+
+    </section>
+
+  } @else if (productosFiltrados.length === 0) {
+
+    <section class="state-card">
+
+      <strong>
+        No se encontraron productos
+      </strong>
+
+      <span>
+        Ajusta los filtros o registra
+        un nuevo producto.
+      </span>
+
+    </section>
+
+  } @else {
+
+    <section class="table-card">
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Código
+              </th>
+
+              <th>
+                Producto
+              </th>
+
+              <th>
+                Categoría
+              </th>
+
+              <th>
+                Unidad
+              </th>
+
+              <th>
+                Precio base
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th class="actions-column">
+                Acciones
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            @for (
+              producto of productosFiltrados;
+              track producto.idProducto
+            ) {
+
+              <tr>
+
+                <td>
+
+                  <span class="product-code">
+                    {{ producto.codigo }}
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <div class="product-cell">
+
+                    <div class="product-icon">
+
+                      {{
+                        producto.nombre
+                          .charAt(0)
+                          .toUpperCase()
+                      }}
+
+                    </div>
+
+                    <div>
+
+                      <strong>
+                        {{ producto.nombre }}
+                      </strong>
+
+                      <span>
+
+                        {{
+                          producto.descripcion ||
+                          'Sin descripción'
+                        }}
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <span class="category-badge">
+
+                    {{
+                      obtenerNombreCategoria(
+                        producto.categoriaId
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span class="unit-value">
+                    {{ producto.unidadMedida }}
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <strong class="price-value">
+
+                    {{
+                      formatearMoneda(
+                        producto.precioBase
+                      )
+                    }}
+
+                  </strong>
+
+                </td>
+
+                <td>
+
+                  @if (producto.estado) {
+
+                    <span class="status-badge active">
+
+                      <span class="status-dot"></span>
+
+                      Activo
+
+                    </span>
+
+                  } @else {
+
+                    <span class="status-badge inactive">
+
+                      <span class="status-dot"></span>
+
+                      Inactivo
+
+                    </span>
+
+                  }
+
+                </td>
+
+                <td class="actions-column">
+
+                  @if (puedeEditar) {
+
+                    <button
+                      type="button"
+                      class="edit-button"
+                      (click)="abrirEditarProducto(producto)"
+                    >
+                      Editar
+                    </button>
+
+                  } @else {
+
+                    <span class="no-action">
+                      —
+                    </span>
+
+                  }
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  }
+
+</main>
+
+@if (mostrarFormulario) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarFormulario()"
+  >
+
+    <section
+      class="modal-card"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+
+            {{
+              modoEdicion
+                ? 'EDITAR PRODUCTO'
+                : 'NUEVO PRODUCTO'
+            }}
+
+          </span>
+
+          <h2>
+
+            {{
+              modoEdicion
+                ? 'Actualizar producto'
+                : 'Registrar producto'
+            }}
+
+          </h2>
+
+          <p>
+
+            {{
+              modoEdicion
+                ? 'Modifica la información comercial del producto.'
+                : 'Agrega un producto al catálogo de la empresa.'
+            }}
+
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          [disabled]="guardando"
+          (click)="cerrarFormulario()"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <form
+        [formGroup]="formularioProducto"
+        (ngSubmit)="guardarProducto()"
+      >
+
+        <div class="form-grid">
+
+          <div class="form-group">
+
+            <label>
+              Código *
+            </label>
+
+            <input
+              type="text"
+              formControlName="codigo"
+              maxlength="50"
+              placeholder="Ej. BOM-XP300"
+            >
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Categoría *
+            </label>
+
+            <select
+              formControlName="categoriaId"
+            >
+
+              <option value="">
+                Seleccionar categoría
+              </option>
+
+              @for (
+                categoria of obtenerCategoriasOrdenadas();
+                track categoria.idCategoria
+              ) {
+
+                <option
+                  [value]="categoria.idCategoria"
+                >
+
+                  {{ categoria.nombre }}
+
+                  @if (!categoria.estado) {
+                    (Inactiva)
+                  }
+
+                </option>
+
+              }
+
+            </select>
+
+          </div>
+
+          <div class="form-group full">
+
+            <label>
+              Nombre del producto *
+            </label>
+
+            <input
+              type="text"
+              formControlName="nombre"
+              maxlength="150"
+              placeholder="Ej. Bomba industrial XP300"
+            >
+
+          </div>
+
+          <div class="form-group full">
+
+            <label>
+              Descripción
+            </label>
+
+            <textarea
+              rows="3"
+              maxlength="255"
+              formControlName="descripcion"
+              placeholder="Descripción comercial o técnica del producto..."
+            ></textarea>
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Unidad de medida *
+            </label>
+
+            <select
+              formControlName="unidadMedida"
+            >
+
+              <option value="UND">
+                UND - Unidad
+              </option>
+
+              <option value="CAJA">
+                CAJA
+              </option>
+
+              <option value="PAQUETE">
+                PAQUETE
+              </option>
+
+              <option value="KIT">
+                KIT
+              </option>
+
+              <option value="KG">
+                KG - Kilogramo
+              </option>
+
+              <option value="M">
+                M - Metro
+              </option>
+
+              <option value="LT">
+                LT - Litro
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Precio base *
+            </label>
+
+            <div class="money-input">
+
+              <span>
+                S/
+              </span>
+
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                formControlName="precioBase"
+              >
+
+            </div>
+
+          </div>
+
+          <div class="form-group full">
+
+            <label>
+              Estado
+            </label>
+
+            <label class="switch-row">
+
+              <input
+                type="checkbox"
+                formControlName="estado"
+              >
+
+              <span class="switch"></span>
+
+              <div>
+
+                <strong>
+                  Producto activo
+                </strong>
+
+                <small>
+                  Los productos inactivos se conservan
+                  en el historial, pero no deberían
+                  utilizarse en nuevas operaciones.
+                </small>
+
+              </div>
+
+            </label>
+
+          </div>
+
+        </div>
+
+        @if (mensajeError) {
+
+          <div class="form-error">
+            {{ mensajeError }}
+          </div>
+
+        }
+
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="secondary-button"
+            [disabled]="guardando"
+            (click)="cerrarFormulario()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+            [disabled]="guardando"
+          >
+
+            @if (guardando) {
+
+              Guardando...
+
+            } @else {
+
+              {{
+                modoEdicion
+                  ? 'Guardar cambios'
+                  : 'Crear producto'
+              }}
+
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+}

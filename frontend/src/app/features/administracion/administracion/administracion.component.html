@@ -1,0 +1,1232 @@
+<div class="administracion-page">
+
+  <!-- ================================================= -->
+  <!-- HEADER -->
+  <!-- ================================================= -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>
+        Administración
+      </h1>
+
+      <p>
+        Gestiona usuarios,
+        roles y permisos
+        de tu empresa.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      class="btn-refresh"
+      (click)="cargarDatos()"
+      [disabled]="cargando"
+    >
+      ↻ Actualizar
+    </button>
+
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- RESUMEN -->
+  <!-- ================================================= -->
+
+  <div class="summary-grid">
+
+    <div class="summary-card">
+
+      <span class="summary-label">
+        Usuarios
+      </span>
+
+      <strong>
+        {{ usuarios.length }}
+      </strong>
+
+      <small>
+        {{ contarUsuariosActivos() }}
+        activos
+      </small>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <span class="summary-label">
+        Roles
+      </span>
+
+      <strong>
+        {{ roles.length }}
+      </strong>
+
+      <small>
+        {{ contarRolesActivos() }}
+        activos
+      </small>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <span class="summary-label">
+        Permisos
+      </span>
+
+      <strong>
+        {{ permisos.length }}
+      </strong>
+
+      <small>
+        disponibles
+      </small>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- MENSAJES -->
+  <!-- ================================================= -->
+
+  <div
+    class="alert success"
+    *ngIf="mensaje"
+  >
+    {{ mensaje }}
+  </div>
+
+  <div
+    class="alert error"
+    *ngIf="error"
+  >
+    {{ error }}
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- PESTAÑAS -->
+  <!-- ================================================= -->
+
+  <div class="tabs">
+
+    <button
+      type="button"
+      [class.active]="
+        pestanaActiva === 'usuarios'
+      "
+      (click)="
+        cambiarPestana('usuarios')
+      "
+    >
+      Usuarios
+    </button>
+
+    <button
+      type="button"
+      [class.active]="
+        pestanaActiva === 'roles'
+      "
+      (click)="
+        cambiarPestana('roles')
+      "
+    >
+      Roles y permisos
+    </button>
+
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- LOADING -->
+  <!-- ================================================= -->
+
+  <div
+    class="loading"
+    *ngIf="cargando"
+  >
+    Cargando administración...
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- USUARIOS -->
+  <!-- ================================================= -->
+
+  <section
+    class="panel"
+    *ngIf="
+      !cargando &&
+      pestanaActiva === 'usuarios'
+    "
+  >
+
+    <div class="panel-header">
+
+      <div>
+
+        <h2>
+          Usuarios
+        </h2>
+
+        <p>
+          Crea usuarios,
+          asigna roles y controla
+          su acceso al sistema.
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="abrirNuevoUsuario()"
+      >
+        + Nuevo usuario
+      </button>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Usuario</th>
+            <th>Correo</th>
+            <th>Roles</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="
+              let usuario of usuarios;
+              trackBy: trackByUsuario
+            "
+          >
+
+            <td>
+
+              <div class="user-cell">
+
+                <div class="avatar">
+
+                  {{
+                    obtenerIniciales(
+                      usuario
+                    )
+                  }}
+
+                </div>
+
+
+                <div>
+
+                  <strong>
+
+                    {{
+                      nombreCompleto(
+                        usuario
+                      )
+                    }}
+
+                  </strong>
+
+                  <small>
+                    ID {{ usuario.idUsuario }}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <td>
+
+              {{ usuario.correo }}
+
+            </td>
+
+
+            <td>
+
+              <div class="chips">
+
+                <span
+                  class="chip"
+                  *ngFor="
+                    let rol of usuario.roles
+                  "
+                >
+
+                  {{ rol }}
+
+                </span>
+
+              </div>
+
+            </td>
+
+
+            <td>
+
+              <span
+                class="status"
+                [class.active]="
+                  usuario.estado
+                "
+                [class.inactive]="
+                  !usuario.estado
+                "
+              >
+
+                {{
+                  usuario.estado
+                    ? 'Activo'
+                    : 'Inactivo'
+                }}
+
+              </span>
+
+            </td>
+
+
+            <td class="actions">
+
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="
+                  abrirUsuario(usuario)
+                "
+              >
+                Administrar
+              </button>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================================================= -->
+  <!-- ROLES -->
+  <!-- ================================================= -->
+
+  <section
+    class="panel"
+    *ngIf="
+      !cargando &&
+      pestanaActiva === 'roles'
+    "
+  >
+
+    <div class="panel-header">
+
+      <div>
+
+        <h2>
+          Roles y permisos
+        </h2>
+
+        <p>
+          Define qué puede hacer
+          cada tipo de usuario.
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="abrirNuevoRol()"
+      >
+        + Nuevo rol
+      </button>
+
+    </div>
+
+
+    <div class="roles-grid">
+
+      <article
+        class="role-card"
+        *ngFor="
+          let rol of roles;
+          trackBy: trackByRol
+        "
+      >
+
+        <div class="role-top">
+
+          <div>
+
+            <h3>
+              {{ rol.nombre }}
+            </h3>
+
+            <span
+              class="status"
+              [class.active]="
+                rol.estado
+              "
+              [class.inactive]="
+                !rol.estado
+              "
+            >
+
+              {{
+                rol.estado
+                  ? 'Activo'
+                  : 'Inactivo'
+              }}
+
+            </span>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="btn-edit"
+            (click)="
+              abrirEditarRol(rol)
+            "
+          >
+            Editar
+          </button>
+
+        </div>
+
+
+        <p class="role-description">
+
+          {{
+            rol.descripcion ||
+            'Sin descripción'
+          }}
+
+        </p>
+
+
+        <div class="role-footer">
+
+          <span>
+
+            {{
+              rol.permisosIds.length
+            }}
+
+            permisos
+
+          </span>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================================================= -->
+  <!-- MODAL NUEVO USUARIO -->
+  <!-- ================================================= -->
+
+  <div
+    class="modal-backdrop"
+    *ngIf="
+      mostrarModalNuevoUsuario
+    "
+  >
+
+    <div class="modal large">
+
+      <div class="modal-header">
+
+        <div>
+
+          <h2>
+            Crear nuevo usuario
+          </h2>
+
+          <p>
+            Registra una cuenta
+            para un miembro
+            de tu empresa.
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="modal-close"
+          (click)="
+            cerrarModalNuevoUsuario()
+          "
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="modal-body">
+
+        <!-- NOMBRE Y APELLIDO -->
+
+        <div class="form-grid">
+
+          <div class="form-group">
+
+            <label>
+              Nombre
+            </label>
+
+            <input
+              type="text"
+              [(ngModel)]="
+                nuevoNombre
+              "
+              placeholder="Ej. Juan"
+              autocomplete="off"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Apellido
+            </label>
+
+            <input
+              type="text"
+              [(ngModel)]="
+                nuevoApellido
+              "
+              placeholder="Ej. Pérez"
+              autocomplete="off"
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- CORREO -->
+
+        <div class="form-group">
+
+          <label>
+            Correo
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              nuevoCorreo
+            "
+            placeholder="
+              usuario@empresa.com
+            "
+            autocomplete="off"
+          >
+
+        </div>
+
+
+        <!-- CONTRASEÑAS -->
+
+        <div class="form-grid">
+
+          <div class="form-group">
+
+            <label>
+              Contraseña
+            </label>
+
+            <input
+              [type]="
+                mostrarPassword
+                  ? 'text'
+                  : 'password'
+              "
+              [(ngModel)]="
+                nuevaPassword
+              "
+              placeholder="
+                Mínimo 8 caracteres
+              "
+              autocomplete="new-password"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Confirmar contraseña
+            </label>
+
+            <input
+              [type]="
+                mostrarPassword
+                  ? 'text'
+                  : 'password'
+              "
+              [(ngModel)]="
+                confirmarPassword
+              "
+              placeholder="
+                Repite la contraseña
+              "
+              autocomplete="new-password"
+            >
+
+          </div>
+
+        </div>
+
+
+        <label
+          class="toggle-row password-toggle"
+        >
+
+          <input
+            type="checkbox"
+            [checked]="
+              mostrarPassword
+            "
+            (change)="
+              alternarMostrarPassword()
+            "
+          >
+
+          <span>
+            Mostrar contraseñas
+          </span>
+
+        </label>
+
+
+        <!-- ESTADO -->
+
+        <div class="form-section">
+
+          <h3>
+            Estado
+          </h3>
+
+          <label
+            class="toggle-row"
+          >
+
+            <input
+              type="checkbox"
+              [(ngModel)]="
+                nuevoUsuarioEstado
+              "
+            >
+
+            <span>
+              Usuario activo
+            </span>
+
+          </label>
+
+        </div>
+
+
+        <!-- ROLES -->
+
+        <div class="form-section">
+
+          <h3>
+            Roles
+          </h3>
+
+          <p class="section-helper">
+            Selecciona al menos
+            un rol para el usuario.
+          </p>
+
+
+          <div class="option-list">
+
+            <label
+              class="check-option"
+              *ngFor="
+                let rol of roles;
+                trackBy: trackByRol
+              "
+            >
+
+              <input
+                type="checkbox"
+                [checked]="
+                  nuevoUsuarioTieneRol(
+                    rol.idRol
+                  )
+                "
+                (change)="
+                  cambiarRolNuevoUsuario(
+                    rol.idRol,
+                    $any($event.target)
+                      .checked
+                  )
+                "
+              >
+
+
+              <div>
+
+                <strong>
+                  {{ rol.nombre }}
+                </strong>
+
+                <small>
+                  {{
+                    rol.descripcion ||
+                    'Sin descripción'
+                  }}
+                </small>
+
+              </div>
+
+            </label>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          class="btn-secondary"
+          [disabled]="
+            guardandoNuevoUsuario
+          "
+          (click)="
+            cerrarModalNuevoUsuario()
+          "
+        >
+          Cancelar
+        </button>
+
+
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="
+            guardandoNuevoUsuario
+          "
+          (click)="
+            guardarNuevoUsuario()
+          "
+        >
+
+          {{
+            guardandoNuevoUsuario
+              ? 'Creando...'
+              : 'Crear usuario'
+          }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- MODAL EDITAR USUARIO -->
+  <!-- ================================================= -->
+
+  <div
+    class="modal-backdrop"
+    *ngIf="mostrarModalUsuario"
+  >
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+
+          <h2>
+            Administrar usuario
+          </h2>
+
+          <p
+            *ngIf="
+              usuarioSeleccionado
+            "
+          >
+
+            {{
+              nombreCompleto(
+                usuarioSeleccionado
+              )
+            }}
+
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="modal-close"
+          (click)="
+            cerrarModalUsuario()
+          "
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="modal-body">
+
+        <div
+          class="user-information"
+          *ngIf="
+            usuarioSeleccionado
+          "
+        >
+
+          <span>
+            Correo
+          </span>
+
+          <strong>
+
+            {{
+              usuarioSeleccionado.correo
+            }}
+
+          </strong>
+
+        </div>
+
+
+        <div class="form-section">
+
+          <h3>
+            Estado
+          </h3>
+
+          <label
+            class="toggle-row"
+          >
+
+            <input
+              type="checkbox"
+              [(ngModel)]="
+                usuarioEstado
+              "
+            >
+
+            <span>
+              Usuario activo
+            </span>
+
+          </label>
+
+        </div>
+
+
+        <div class="form-section">
+
+          <h3>
+            Roles asignados
+          </h3>
+
+
+          <div class="option-list">
+
+            <label
+              class="check-option"
+              *ngFor="
+                let rol of roles;
+                trackBy: trackByRol
+              "
+            >
+
+              <input
+                type="checkbox"
+                [checked]="
+                  usuarioTieneRol(
+                    rol.idRol
+                  )
+                "
+                (change)="
+                  cambiarRolUsuario(
+                    rol.idRol,
+                    $any($event.target)
+                      .checked
+                  )
+                "
+              >
+
+
+              <div>
+
+                <strong>
+                  {{ rol.nombre }}
+                </strong>
+
+                <small>
+                  {{ rol.descripcion }}
+                </small>
+
+              </div>
+
+            </label>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="
+            cerrarModalUsuario()
+          "
+        >
+          Cancelar
+        </button>
+
+
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="
+            guardandoUsuario
+          "
+          (click)="
+            guardarUsuario()
+          "
+        >
+
+          {{
+            guardandoUsuario
+              ? 'Guardando...'
+              : 'Guardar cambios'
+          }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- MODAL ROL -->
+  <!-- ================================================= -->
+
+  <div
+    class="modal-backdrop"
+    *ngIf="mostrarModalRol"
+  >
+
+    <div class="modal large">
+
+      <div class="modal-header">
+
+        <div>
+
+          <h2>
+
+            {{
+              rolEditando
+                ? 'Editar rol'
+                : 'Nuevo rol'
+            }}
+
+          </h2>
+
+          <p>
+            Configura el rol
+            y sus permisos.
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="modal-close"
+          (click)="cerrarModalRol()"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="modal-body">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+
+            <label>
+              Nombre
+            </label>
+
+            <input
+              type="text"
+              [(ngModel)]="
+                rolNombre
+              "
+              placeholder="
+                Ej. SUPERVISOR
+              "
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Estado
+            </label>
+
+            <label
+              class="toggle-row"
+            >
+
+              <input
+                type="checkbox"
+                [(ngModel)]="
+                  rolEstado
+                "
+              >
+
+              <span>
+                Rol activo
+              </span>
+
+            </label>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Descripción
+          </label>
+
+          <textarea
+            rows="3"
+            [(ngModel)]="
+              rolDescripcion
+            "
+            placeholder="
+              Describe las funciones
+              de este rol
+            "
+          ></textarea>
+
+        </div>
+
+
+        <div class="permissions-header">
+
+          <div>
+
+            <h3>
+              Permisos
+            </h3>
+
+            <span>
+
+              {{
+                rolPermisosIds.length
+              }}
+
+              de
+
+              {{
+                permisos.length
+              }}
+
+              seleccionados
+
+            </span>
+
+          </div>
+
+
+          <div
+            class="permission-actions"
+          >
+
+            <button
+              type="button"
+              (click)="
+                seleccionarTodosPermisos()
+              "
+            >
+              Seleccionar todos
+            </button>
+
+            <button
+              type="button"
+              (click)="
+                quitarTodosPermisos()
+              "
+            >
+              Quitar todos
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="permissions-grid">
+
+          <label
+            class="permission-card"
+            *ngFor="
+              let permiso of permisos;
+              trackBy: trackByPermiso
+            "
+          >
+
+            <input
+              type="checkbox"
+              [checked]="
+                rolTienePermiso(
+                  permiso.idPermiso
+                )
+              "
+              (change)="
+                cambiarPermisoRol(
+                  permiso.idPermiso,
+                  $any($event.target)
+                    .checked
+                )
+              "
+            >
+
+
+            <div>
+
+              <strong>
+                {{ permiso.nombre }}
+              </strong>
+
+              <code>
+                {{ permiso.codigo }}
+              </code>
+
+              <small>
+                {{
+                  permiso.descripcion
+                }}
+              </small>
+
+            </div>
+
+          </label>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="cerrarModalRol()"
+        >
+          Cancelar
+        </button>
+
+
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="
+            guardandoRol
+          "
+          (click)="guardarRol()"
+        >
+
+          {{
+            guardandoRol
+              ? 'Guardando...'
+              : (
+                rolEditando
+                  ? 'Guardar cambios'
+                  : 'Crear rol'
+              )
+          }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

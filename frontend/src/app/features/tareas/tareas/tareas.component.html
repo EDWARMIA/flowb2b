@@ -1,0 +1,933 @@
+<main class="tareas-page">
+
+  <section class="page-header">
+
+    <div>
+
+      <span class="page-eyebrow">
+        OPERACIONES
+      </span>
+
+      <h1>
+        Tareas
+      </h1>
+
+      <p>
+        Gestiona las actividades operativas
+        asociadas a los pedidos.
+      </p>
+
+    </div>
+
+    @if (puedeGestionar) {
+
+      <button
+        type="button"
+        class="primary-button"
+        (click)="abrirNuevaTarea()"
+      >
+        <span>+</span>
+        Nueva tarea
+      </button>
+
+    }
+
+  </section>
+
+  <section class="summary-grid">
+
+    <article class="summary-card">
+
+      <span>
+        Total tareas
+      </span>
+
+      <strong>
+        {{ tareas.length }}
+      </strong>
+
+    </article>
+
+    <article class="summary-card">
+
+      <span>
+        Pendientes
+      </span>
+
+      <strong>
+        {{ obtenerCantidadPendientes() }}
+      </strong>
+
+    </article>
+
+    <article class="summary-card">
+
+      <span>
+        En proceso
+      </span>
+
+      <strong>
+        {{ obtenerCantidadEnProceso() }}
+      </strong>
+
+    </article>
+
+    <article class="summary-card">
+
+      <span>
+        Completadas
+      </span>
+
+      <strong>
+        {{ obtenerCantidadCompletadas() }}
+      </strong>
+
+    </article>
+
+  </section>
+
+  <section class="toolbar">
+
+    <div class="search-box">
+
+      <svg viewBox="0 0 24 24">
+
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <path
+          d="m20 20-3.5-3.5"
+        ></path>
+
+      </svg>
+
+      <input
+        type="text"
+        placeholder="Buscar tarea, tipo o pedido..."
+        (input)="buscar($event)"
+      >
+
+    </div>
+
+    <div class="filters">
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado === 'TODAS'
+        "
+        (click)="
+          cambiarFiltroEstado(
+            'TODAS'
+          )
+        "
+      >
+        Todas
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado === 'PENDIENTE'
+        "
+        (click)="
+          cambiarFiltroEstado(
+            'PENDIENTE'
+          )
+        "
+      >
+        Pendientes
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado === 'EN_PROCESO'
+        "
+        (click)="
+          cambiarFiltroEstado(
+            'EN_PROCESO'
+          )
+        "
+      >
+        En proceso
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          filtroEstado === 'COMPLETADA'
+        "
+        (click)="
+          cambiarFiltroEstado(
+            'COMPLETADA'
+          )
+        "
+      >
+        Completadas
+      </button>
+
+    </div>
+
+  </section>
+
+  @if (errorCarga) {
+
+    <section class="state-card error-state">
+
+      <strong>
+        No se pudieron cargar las tareas
+      </strong>
+
+      <span>
+        {{ mensajeError }}
+      </span>
+
+      <button
+        type="button"
+        (click)="cargarDatos()"
+      >
+        Reintentar
+      </button>
+
+    </section>
+
+  } @else if (cargando) {
+
+    <section class="state-card">
+
+      <div class="loader"></div>
+
+      <strong>
+        Cargando tareas...
+      </strong>
+
+    </section>
+
+  } @else if (
+    tareasFiltradas.length === 0
+  ) {
+
+    <section class="state-card">
+
+      <strong>
+        No hay tareas
+      </strong>
+
+      <span>
+        No existen tareas que coincidan
+        con los filtros seleccionados.
+      </span>
+
+    </section>
+
+  } @else {
+
+    <section class="table-card">
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Tarea
+              </th>
+
+              <th>
+                Pedido
+              </th>
+
+              <th>
+                Tipo
+              </th>
+
+              <th>
+                Prioridad
+              </th>
+
+              <th>
+                Fecha límite
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th>
+                Acciones
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            @for (
+              tarea of tareasFiltradas;
+              track tarea.idTarea
+            ) {
+
+              <tr>
+
+                <td>
+
+                  <div class="task-title">
+
+                    <strong>
+                      {{ tarea.titulo }}
+                    </strong>
+
+                    <span>
+                      {{
+                        tarea.descripcion ||
+                        'Sin descripción'
+                      }}
+                    </span>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <span class="pedido-code">
+
+                    {{
+                      obtenerCodigoPedido(
+                        tarea.pedidoId
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  {{
+                    tipoLegible(
+                      tarea.tipo
+                    )
+                  }}
+
+                </td>
+
+                <td>
+
+                  <span
+                    class="priority-badge"
+                    [ngClass]="
+                      obtenerClasePrioridad(
+                        tarea.prioridad
+                      )
+                    "
+                  >
+
+                    {{
+                      prioridadLegible(
+                        tarea.prioridad
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  {{
+                    formatearFecha(
+                      tarea.fechaLimite
+                    )
+                  }}
+
+                </td>
+
+                <td>
+
+                  <span
+                    class="status-badge"
+                    [ngClass]="
+                      obtenerClaseEstado(
+                        tarea.estado
+                      )
+                    "
+                  >
+
+                    {{
+                      estadoLegible(
+                        tarea.estado
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <div class="actions">
+
+                    <button
+                      type="button"
+                      class="detail-button"
+                      (click)="
+                        verDetalle(tarea)
+                      "
+                    >
+                      Ver
+                    </button>
+
+                    @if (
+                      puedeGestionar &&
+                      tarea.estado ===
+                        'PENDIENTE'
+                    ) {
+
+                      <button
+                        type="button"
+                        class="action-button"
+                        [disabled]="
+                          cambiandoEstado
+                        "
+                        (click)="
+                          cambiarEstado(
+                            tarea,
+                            'EN_PROCESO'
+                          )
+                        "
+                      >
+                        Iniciar
+                      </button>
+
+                    }
+
+                    @if (
+                      puedeGestionar &&
+                      tarea.estado ===
+                        'EN_PROCESO'
+                    ) {
+
+                      <button
+                        type="button"
+                        class="complete-button"
+                        [disabled]="
+                          cambiandoEstado
+                        "
+                        (click)="
+                          cambiarEstado(
+                            tarea,
+                            'COMPLETADA'
+                          )
+                        "
+                      >
+                        Completar
+                      </button>
+
+                    }
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  }
+
+</main>
+
+
+@if (mostrarFormulario) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarFormulario()"
+  >
+
+    <section
+      class="modal-card"
+      (click)="
+        $event.stopPropagation()
+      "
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            NUEVA TAREA
+          </span>
+
+          <h2>
+            Crear tarea
+          </h2>
+
+          <p>
+            Asigna una actividad operativa
+            a uno de los pedidos.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          [disabled]="guardando"
+          (click)="cerrarFormulario()"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <form
+        [formGroup]="formularioTarea"
+        (ngSubmit)="guardarTarea()"
+      >
+
+        <div class="form-grid">
+
+          <div class="form-group full">
+
+            <label>
+              Pedido *
+            </label>
+
+            <select
+              formControlName="pedidoId"
+            >
+
+              <option value="">
+                Seleccionar pedido
+              </option>
+
+              @for (
+                pedido of pedidos;
+                track pedido.idPedido
+              ) {
+
+                <option
+                  [value]="pedido.idPedido"
+                >
+                  {{ pedido.codigo }}
+                  - S/
+                  {{ pedido.total }}
+                </option>
+
+              }
+
+            </select>
+
+          </div>
+
+          <div class="form-group full">
+
+            <label>
+              Título *
+            </label>
+
+            <input
+              type="text"
+              formControlName="titulo"
+              placeholder="Ej. Preparar pedido para despacho"
+            >
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Tipo *
+            </label>
+
+            <select
+              formControlName="tipo"
+            >
+
+              <option value="PREPARACION">
+                Preparación
+              </option>
+
+              <option value="ALMACEN">
+                Almacén
+              </option>
+
+              <option value="DESPACHO">
+                Despacho
+              </option>
+
+              <option value="ENTREGA">
+                Entrega
+              </option>
+
+              <option value="SEGUIMIENTO">
+                Seguimiento
+              </option>
+
+              <option value="OTRO">
+                Otro
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="form-group">
+
+            <label>
+              Prioridad *
+            </label>
+
+            <select
+              formControlName="prioridad"
+            >
+
+              <option value="BAJA">
+                Baja
+              </option>
+
+              <option value="MEDIA">
+                Media
+              </option>
+
+              <option value="ALTA">
+                Alta
+              </option>
+
+              <option value="URGENTE">
+                Urgente
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="form-group full">
+
+            <label>
+              Fecha límite
+            </label>
+
+            <input
+              type="datetime-local"
+              formControlName="fechaLimite"
+            >
+
+          </div>
+
+          <div class="form-group full">
+
+            <label>
+              Descripción
+            </label>
+
+            <textarea
+              rows="4"
+              formControlName="descripcion"
+              placeholder="Describe lo que debe realizarse..."
+            ></textarea>
+
+          </div>
+
+        </div>
+
+        @if (mensajeError) {
+
+          <div class="form-error">
+            {{ mensajeError }}
+          </div>
+
+        }
+
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="secondary-button"
+            [disabled]="guardando"
+            (click)="cerrarFormulario()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+            [disabled]="guardando"
+          >
+
+            @if (guardando) {
+              Guardando...
+            } @else {
+              Crear tarea
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+}
+
+
+@if (tareaSeleccionada) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarDetalle()"
+  >
+
+    <section
+      class="modal-card detail-modal"
+      (click)="
+        $event.stopPropagation()
+      "
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            DETALLE DE TAREA
+          </span>
+
+          <h2>
+            {{ tareaSeleccionada.titulo }}
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarDetalle()"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <div class="detail-grid">
+
+        <div class="detail-item">
+
+          <span>
+            Pedido
+          </span>
+
+          <strong>
+            {{
+              obtenerCodigoPedido(
+                tareaSeleccionada.pedidoId
+              )
+            }}
+          </strong>
+
+        </div>
+
+        <div class="detail-item">
+
+          <span>
+            Estado
+          </span>
+
+          <strong>
+            {{
+              estadoLegible(
+                tareaSeleccionada.estado
+              )
+            }}
+          </strong>
+
+        </div>
+
+        <div class="detail-item">
+
+          <span>
+            Tipo
+          </span>
+
+          <strong>
+            {{
+              tipoLegible(
+                tareaSeleccionada.tipo
+              )
+            }}
+          </strong>
+
+        </div>
+
+        <div class="detail-item">
+
+          <span>
+            Prioridad
+          </span>
+
+          <strong>
+            {{
+              prioridadLegible(
+                tareaSeleccionada.prioridad
+              )
+            }}
+          </strong>
+
+        </div>
+
+        <div class="detail-item">
+
+          <span>
+            Fecha límite
+          </span>
+
+          <strong>
+            {{
+              formatearFecha(
+                tareaSeleccionada.fechaLimite
+              )
+            }}
+          </strong>
+
+        </div>
+
+        <div class="detail-item">
+
+          <span>
+            Completada
+          </span>
+
+          <strong>
+            {{
+              formatearFecha(
+                tareaSeleccionada.fechaCompletada
+              )
+            }}
+          </strong>
+
+        </div>
+
+      </div>
+
+      <div class="description-card">
+
+        <span>
+          Descripción
+        </span>
+
+        <p>
+          {{
+            tareaSeleccionada.descripcion ||
+            'Sin descripción'
+          }}
+        </p>
+
+      </div>
+
+      @if (puedeGestionar) {
+
+        <footer class="modal-footer">
+
+          @if (
+            tareaSeleccionada.estado ===
+              'PENDIENTE'
+          ) {
+
+            <button
+              type="button"
+              class="primary-button"
+              [disabled]="
+                cambiandoEstado
+              "
+              (click)="
+                cambiarEstado(
+                  tareaSeleccionada,
+                  'EN_PROCESO'
+                )
+              "
+            >
+              Iniciar tarea
+            </button>
+
+          }
+
+          @if (
+            tareaSeleccionada.estado ===
+              'EN_PROCESO'
+          ) {
+
+            <button
+              type="button"
+              class="complete-button large"
+              [disabled]="
+                cambiandoEstado
+              "
+              (click)="
+                cambiarEstado(
+                  tareaSeleccionada,
+                  'COMPLETADA'
+                )
+              "
+            >
+              Marcar completada
+            </button>
+
+          }
+
+          @if (
+            tareaSeleccionada.estado !==
+              'COMPLETADA' &&
+            tareaSeleccionada.estado !==
+              'CANCELADA'
+          ) {
+
+            <button
+              type="button"
+              class="danger-button"
+              [disabled]="
+                cambiandoEstado
+              "
+              (click)="
+                cambiarEstado(
+                  tareaSeleccionada,
+                  'CANCELADA'
+                )
+              "
+            >
+              Cancelar tarea
+            </button>
+
+          }
+
+        </footer>
+
+      }
+
+    </section>
+
+  </div>
+
+}

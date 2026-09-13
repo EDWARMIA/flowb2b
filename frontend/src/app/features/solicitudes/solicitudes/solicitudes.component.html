@@ -1,0 +1,934 @@
+<main class="solicitudes-page">
+
+  <!-- =====================================================
+       CABECERA
+       ===================================================== -->
+  <section class="page-header">
+
+    <div>
+
+      <span class="page-eyebrow">
+        FLUJO COMERCIAL
+      </span>
+
+      <h1>
+        Solicitudes
+      </h1>
+
+      <p>
+        Registra y administra las solicitudes
+        comerciales recibidas de tus clientes.
+      </p>
+
+    </div>
+
+    @if (puedeCrear) {
+
+      <button
+        type="button"
+        class="primary-button"
+        (click)="abrirNuevaSolicitud()"
+      >
+
+        <span class="button-plus">
+          +
+        </span>
+
+        Nueva solicitud
+
+      </button>
+
+    }
+
+  </section>
+
+  <!-- =====================================================
+       TOOLBAR
+       ===================================================== -->
+  <section class="toolbar">
+
+    <div class="search-box">
+
+      <svg viewBox="0 0 24 24">
+
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <path
+          d="m20 20-3.5-3.5"
+        ></path>
+
+      </svg>
+
+      <input
+        type="text"
+        placeholder="Buscar por código, cliente, origen o estado..."
+        (input)="buscar($event)"
+      >
+
+    </div>
+
+    <div class="toolbar-count">
+
+      <strong>
+        {{ solicitudesFiltradas.length }}
+      </strong>
+
+      <span>
+        solicitudes
+      </span>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       ERROR
+       ===================================================== -->
+  @if (errorCarga) {
+
+    <section class="state-card error-state">
+
+      <strong>
+        No se pudieron cargar las solicitudes
+      </strong>
+
+      <span>
+        {{ mensajeError }}
+      </span>
+
+      <button
+        type="button"
+        (click)="cargarDatos()"
+      >
+        Reintentar
+      </button>
+
+    </section>
+
+  }
+
+  <!-- =====================================================
+       CARGANDO
+       ===================================================== -->
+  @else if (cargando) {
+
+    <section class="state-card">
+
+      <div class="loader">
+      </div>
+
+      <strong>
+        Cargando solicitudes...
+      </strong>
+
+    </section>
+
+  }
+
+  <!-- =====================================================
+       VACÍO
+       ===================================================== -->
+  @else if (
+    solicitudesFiltradas.length === 0
+  ) {
+
+    <section class="state-card">
+
+      <div class="empty-icon">
+
+        <svg viewBox="0 0 24 24">
+
+          <path
+            d="M6 2h9l4 4v16H6z"
+          ></path>
+
+          <path
+            d="M15 2v5h5"
+          ></path>
+
+          <path
+            d="M9 12h6"
+          ></path>
+
+        </svg>
+
+      </div>
+
+      <strong>
+        No se encontraron solicitudes
+      </strong>
+
+      <span>
+        Las solicitudes comerciales aparecerán aquí.
+      </span>
+
+    </section>
+
+  }
+
+  <!-- =====================================================
+       TABLA
+       ===================================================== -->
+  @else {
+
+    <section class="table-card">
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Código
+              </th>
+
+              <th>
+                Cliente
+              </th>
+
+              <th>
+                Origen
+              </th>
+
+              <th>
+                Productos
+              </th>
+
+              <th>
+                Fecha
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th class="actions-column">
+                Acciones
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            @for (
+              solicitud of solicitudesFiltradas;
+              track solicitud.idSolicitud
+            ) {
+
+              <tr>
+
+                <td>
+
+                  <div class="code-cell">
+
+                    <strong>
+                      {{ solicitud.codigo }}
+                    </strong>
+
+                    <span>
+                      #{{ solicitud.idSolicitud }}
+                    </span>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <div class="client-cell">
+
+                    <div class="client-avatar">
+
+                      {{
+                        obtenerNombreCliente(
+                          solicitud.clienteId
+                        )
+                          .charAt(0)
+                          .toUpperCase()
+                      }}
+
+                    </div>
+
+                    <strong>
+
+                      {{
+                        obtenerNombreCliente(
+                          solicitud.clienteId
+                        )
+                      }}
+
+                    </strong>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <span class="origin-badge">
+
+                    {{
+                      solicitud.origen
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <strong class="product-count">
+
+                    {{
+                      solicitud.detalles.length
+                    }}
+
+                  </strong>
+
+                  <span class="product-label">
+
+                    {{
+                      solicitud.detalles.length === 1
+                      ? 'producto'
+                      : 'productos'
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span class="date-cell">
+
+                    {{
+                      formatearFecha(
+                        solicitud.fechaSolicitud
+                      )
+                    }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span
+                    class="status-badge"
+                    [class.nueva]="
+                      solicitud.estado === 'NUEVA'
+                    "
+                  >
+
+                    <span class="status-dot">
+                    </span>
+
+                    {{ solicitud.estado }}
+
+                  </span>
+
+                </td>
+
+                <td class="actions-column">
+
+                  <button
+                    type="button"
+                    class="view-button"
+                    (click)="verDetalle(solicitud)"
+                  >
+
+                    <svg viewBox="0 0 24 24">
+
+                      <path
+                        d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"
+                      ></path>
+
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="2.5"
+                      ></circle>
+
+                    </svg>
+
+                    Ver
+
+                  </button>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  }
+
+</main>
+
+<!-- =======================================================
+     MODAL NUEVA SOLICITUD
+     ======================================================= -->
+@if (mostrarFormulario) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarFormulario()"
+  >
+
+    <section
+      class="modal-card solicitud-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            SOLICITUD COMERCIAL
+          </span>
+
+          <h2>
+            Nueva solicitud
+          </h2>
+
+          <p>
+            Registra la solicitud recibida
+            desde un cliente.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarFormulario()"
+          [disabled]="guardando"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <form
+        [formGroup]="formularioSolicitud"
+        (ngSubmit)="guardarSolicitud()"
+      >
+
+        <div class="form-grid">
+
+          <!-- CLIENTE -->
+          <div class="form-group full">
+
+            <label>
+              Cliente *
+            </label>
+
+            <select
+              formControlName="clienteId"
+            >
+
+              <option value="">
+                Seleccionar cliente
+              </option>
+
+              @for (
+                cliente of clientes;
+                track cliente.idCliente
+              ) {
+
+                <option
+                  [value]="cliente.idCliente"
+                >
+
+                  {{
+                    cliente.nombreComercial
+                    || cliente.razonSocial
+                  }}
+
+                  @if (
+                    cliente.numeroDocumento
+                  ) {
+                    - {{ cliente.numeroDocumento }}
+                  }
+
+                </option>
+
+              }
+
+            </select>
+
+          </div>
+
+          <!-- CÓDIGO -->
+          <div class="form-group">
+
+            <label>
+              Código *
+            </label>
+
+            <input
+              type="text"
+              formControlName="codigo"
+              maxlength="30"
+              placeholder="Ej. SOL-005"
+            >
+
+          </div>
+
+          <!-- ORIGEN -->
+          <div class="form-group">
+
+            <label>
+              Origen *
+            </label>
+
+            <select
+              formControlName="origen"
+            >
+
+              <option value="WHATSAPP">
+                WhatsApp
+              </option>
+
+              <option value="CORREO">
+                Correo
+              </option>
+
+              <option value="TELEFONO">
+                Teléfono
+              </option>
+
+              <option value="WEB">
+                Web
+              </option>
+
+              <option value="PRESENCIAL">
+                Presencial
+              </option>
+
+              <option value="OTRO">
+                Otro
+              </option>
+
+            </select>
+
+          </div>
+
+          <!-- DESCRIPCIÓN -->
+          <div class="form-group full">
+
+            <label>
+              Descripción
+            </label>
+
+            <textarea
+              formControlName="descripcion"
+              rows="3"
+              placeholder="Describe brevemente la necesidad del cliente..."
+            ></textarea>
+
+          </div>
+
+          <!-- PRODUCTOS -->
+          <div class="section-title full">
+
+            <div>
+
+              <strong>
+                Productos solicitados
+              </strong>
+
+              <span>
+                Agrega uno o más productos a la solicitud.
+              </span>
+
+            </div>
+
+            <button
+              type="button"
+              class="add-product-button"
+              (click)="agregarProducto()"
+            >
+              + Agregar producto
+            </button>
+
+          </div>
+
+          <div
+            class="products-container full"
+            formArrayName="detalles"
+          >
+
+            @for (
+              detalle of detalles.controls;
+              track $index;
+              let i = $index
+            ) {
+
+              <div
+                class="product-row"
+                [formGroupName]="i"
+              >
+
+                <div class="product-number">
+                  {{ i + 1 }}
+                </div>
+
+                <div class="product-field">
+
+                  <label>
+                    Producto *
+                  </label>
+
+                  <select
+                    formControlName="productoId"
+                  >
+
+                    <option value="">
+                      Seleccionar producto
+                    </option>
+
+                    @for (
+                      producto of productos;
+                      track producto.idProducto
+                    ) {
+
+                      <option
+                        [value]="producto.idProducto"
+                      >
+
+                        {{ producto.codigo }}
+                        -
+                        {{ producto.nombre }}
+
+                        @if (
+                          producto.unidadMedida
+                        ) {
+                          ({{ producto.unidadMedida }})
+                        }
+
+                      </option>
+
+                    }
+
+                  </select>
+
+                </div>
+
+                <div class="quantity-field">
+
+                  <label>
+                    Cantidad *
+                  </label>
+
+                  <input
+                    type="number"
+                    formControlName="cantidad"
+                    min="1"
+                    step="1"
+                  >
+
+                </div>
+
+                <div class="observation-field">
+
+                  <label>
+                    Observación
+                  </label>
+
+                  <input
+                    type="text"
+                    formControlName="observacion"
+                    maxlength="255"
+                    placeholder="Opcional"
+                  >
+
+                </div>
+
+                <button
+                  type="button"
+                  class="remove-product-button"
+                  title="Quitar producto"
+                  [disabled]="detalles.length === 1"
+                  (click)="eliminarProducto(i)"
+                >
+                  ×
+                </button>
+
+              </div>
+
+            }
+
+          </div>
+
+        </div>
+
+        @if (mensajeError) {
+
+          <div class="form-error">
+            {{ mensajeError }}
+          </div>
+
+        }
+
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="cerrarFormulario()"
+            [disabled]="guardando"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+            [disabled]="guardando"
+          >
+
+            @if (guardando) {
+
+              Guardando...
+
+            } @else {
+
+              Crear solicitud
+
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+}
+
+<!-- =======================================================
+     MODAL DETALLE
+     ======================================================= -->
+@if (
+  mostrarDetalle &&
+  solicitudSeleccionada
+) {
+
+  <div
+    class="modal-backdrop"
+    (click)="cerrarDetalle()"
+  >
+
+    <section
+      class="modal-card detail-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            DETALLE DE SOLICITUD
+          </span>
+
+          <h2>
+            {{ solicitudSeleccionada.codigo }}
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          (click)="cerrarDetalle()"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <div class="detail-content">
+
+        <div class="detail-grid">
+
+          <div>
+
+            <span>
+              Cliente
+            </span>
+
+            <strong>
+
+              {{
+                obtenerNombreCliente(
+                  solicitudSeleccionada.clienteId
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Estado
+            </span>
+
+            <strong>
+              {{ solicitudSeleccionada.estado }}
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Origen
+            </span>
+
+            <strong>
+              {{ solicitudSeleccionada.origen }}
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Fecha
+            </span>
+
+            <strong>
+
+              {{
+                formatearFecha(
+                  solicitudSeleccionada.fechaSolicitud
+                )
+              }}
+
+            </strong>
+
+          </div>
+
+        </div>
+
+        <div class="description-box">
+
+          <span>
+            Descripción
+          </span>
+
+          <p>
+
+            {{
+              solicitudSeleccionada.descripcion
+              || 'Sin descripción'
+            }}
+
+          </p>
+
+        </div>
+
+        <div class="detail-products">
+
+          <h3>
+            Productos solicitados
+          </h3>
+
+          @for (
+            detalle of solicitudSeleccionada.detalles;
+            track detalle.idDetalle
+          ) {
+
+            <div class="detail-product-row">
+
+              <div>
+
+                <strong>
+
+                  {{
+                    obtenerNombreProducto(
+                      detalle.productoId
+                    )
+                  }}
+
+                </strong>
+
+                <span>
+
+                  {{
+                    obtenerCodigoProducto(
+                      detalle.productoId
+                    )
+                  }}
+
+                </span>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Cantidad
+                </span>
+
+                <strong>
+                  {{ detalle.cantidad }}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Observación
+                </span>
+
+                <strong>
+
+                  {{
+                    detalle.observacion
+                    || '-'
+                  }}
+
+                </strong>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+}
